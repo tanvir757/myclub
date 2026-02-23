@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ক্লাব ম্যানেজমেন্ট অ্যাপ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        /* ================= কালার প্যালেট ================= */
+        :root {
+            --app-bg: #eef2f6; --nav-bg: #2b4266; --primary: #3b82f6; --card-bg: #ffffff;
+            --text-main: #1e293b; --text-muted: #64748b; --success: #10b981;
+            --danger: #ff0050; --warning: #f59e0b; --info: #0ea5e9;
+        }
+
+        body { font-family: 'Poppins', 'Noto Sans Bengali', sans-serif; background-color: var(--app-bg); color: var(--text-main); margin: 0; padding: 0; overflow-x: hidden; padding-bottom: 90px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ================= 4-Dot 3D Cross লোডার ================= */
+        #startupLoader, #actionLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.4s; }
+        #startupLoader { background: #ffffff; }
+        #actionLoader { background: rgba(15, 23, 42, 0.85); visibility: hidden; opacity: 0; }
+        #actionLoader.active { visibility: visible; opacity: 1; }
+        
+        .club-spinner { position: relative; width: 40px; height: 40px; margin-bottom: 30px; }
+        .dot { position: absolute; width: 16px; height: 16px; border-radius: 50%; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+        .dot1 { background-color: var(--primary); top: 0; left: 0; animation-name: crossTL_BR; }
+        .dot2 { background-color: var(--warning); top: 0; right: 0; animation-name: crossTR_BL; }
+        .dot3 { background-color: var(--success); bottom: 0; left: 0; animation-name: crossBL_TR; }
+        .dot4 { background-color: var(--danger); bottom: 0; right: 0; animation-name: crossBR_TL; }
+
+        @keyframes crossTL_BR { 0%, 100% { transform: translate(0, 0); z-index: 2; } 25% { transform: translate(12px, 12px) scale(1.4); z-index: 2; } 50% { transform: translate(24px, 24px); z-index: 1; } 75% { transform: translate(12px, 12px) scale(0.6); z-index: 1; } }
+        @keyframes crossBR_TL { 0%, 100% { transform: translate(0, 0); z-index: 1; } 25% { transform: translate(-12px, -12px) scale(0.6); z-index: 1; } 50% { transform: translate(-24px, -24px); z-index: 2; } 75% { transform: translate(-12px, -12px) scale(1.4); z-index: 2; } }
+        @keyframes crossTR_BL { 0%, 100% { transform: translate(0, 0); z-index: 2; } 25% { transform: translate(-12px, 12px) scale(1.4); z-index: 2; } 50% { transform: translate(-24px, 24px); z-index: 1; } 75% { transform: translate(-12px, 12px) scale(0.6); z-index: 1; } }
+        @keyframes crossBL_TR { 0%, 100% { transform: translate(0, 0); z-index: 1; } 25% { transform: translate(12px, -12px) scale(0.6); z-index: 1; } 50% { transform: translate(24px, -24px); z-index: 2; } 75% { transform: translate(12px, -12px) scale(1.4); z-index: 2; } }
+
+        /* ================= হেডার ও বাটন ডিজাইন ================= */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 8px;}
+        .club-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+
+        .edit-switch-wrapper { display: flex; align-items: center; gap: 8px; background: white; padding: 6px 12px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .switch-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .toggle-switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .login-btn { display: flex; align-items: center; gap: 6px; background: linear-gradient(45deg, var(--primary), #00f2fe); color: white; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); transition: 0.3s; }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(59, 130, 246, 0.5); }
+        .login-btn.logged-in { background: linear-gradient(45deg, var(--danger), var(--warning)); box-shadow: 0 4px 12px rgba(255, 0, 80, 0.4); }
+
+        .welcome-sec { margin-bottom: 20px; }
+        .welcome-sec h1 { margin: 0 0 2px; font-size: 22px; color: var(--nav-bg); }
+        .welcome-sec p { margin: 0; color: var(--text-muted); font-size: 13px; }
+
+        /* ================= কার্ড ================= */
+        .section-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
+        .card-dark, .card-light { padding: 15px; border-radius: 20px; position: relative; overflow: hidden; }
+        .card-dark { background: var(--nav-bg); color: white; box-shadow: 0 8px 15px rgba(43, 66, 102, 0.2); }
+        .card-dark h3, .card-light h3 { margin: 0 0 5px; font-size: 12px; opacity: 0.8; font-weight: 500;}
+        .card-dark .amount, .card-light .amount { font-size: 22px; font-weight: 700; margin: 0; }
+        .card-light { background: white; box-shadow: 0 6px 12px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .card-light h3 { color: var(--text-muted); }
+        .card-light .amount { color: var(--text-main); }
+
+        /* ================= টেবিল ================= */
+        .page-section { display: none; animation: fadeIn 0.3s ease forwards; }
+        .page-section.active { display: block; }
+        .list-container { background: white; border-radius: 20px; padding: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.03); overflow-x: auto; border: 1px solid #f1f5f9;}
+        table { width: 100%; border-collapse: collapse; table-layout: auto; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
+        th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        
+        .compact-table th:nth-child(1), .compact-table td:nth-child(1) { width: 40%; text-align: left; }
+        .compact-table th:nth-child(2), .compact-table td:nth-child(2) { width: 15%; text-align: center; }
+        .compact-table th:nth-child(3), .compact-table td:nth-child(3) { width: 25%; text-align: right; }
+        .compact-table th:nth-child(4), .compact-table td:nth-child(4) { width: 20%; text-align: right; }
+        
+        .clickable-name { color: var(--nav-bg); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .avatar-sm { width: 32px; height: 32px; border-radius: 10px; object-fit: cover; }
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; white-space: nowrap;}
+        .badge.green { background: #d1fae5; color: #059669; }
+        .badge.red { background: #fee2e2; color: #b91c1c; }
+        .action-icon { background: #f1f5f9; border: none; border-radius: 6px; padding: 6px 8px; cursor: pointer; color: var(--text-muted); font-size: 13px; margin-left: 3px; transition: 0.2s;}
+        .action-icon:hover { background: #e2e8f0; color: var(--danger); }
+
+        /* ================= বটম নেভিগেশন ================= */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); border-top-left-radius: 25px; border-top-right-radius: 25px; display: flex; justify-content: space-between; align-items: center; padding: 8px 15px 15px; box-sizing: border-box; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.1);}
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: white; opacity: 0.5; font-size: 11px; cursor: pointer; flex: 1; transition: 0.3s;}
+        .nav-item.active { opacity: 1; color: #93c5fd; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        .fab-wrapper { position: relative; top: -30px; display: flex; justify-content: center; width: 60px; }
+        .fab-btn { background: var(--primary); width: 55px; height: 55px; border-radius: 50%; border: 5px solid var(--app-bg); display: flex; justify-content: center; align-items: center; color: white; font-size: 26px; cursor: pointer; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); border: none; outline: none; }
+
+        /* ================= পপ-আপ মডাল ================= */
+        .modal-overlay { visibility: hidden; opacity: 0; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: flex-end; z-index: 1000; transition: 0.3s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-content { background: white; width: 100%; max-width: 500px; padding: 25px 20px 30px; border-radius: 24px 24px 0 0; transform: translateY(100%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 85vh; overflow-y: auto; box-sizing: border-box; }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .close-btn { position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; font-weight: bold; color: var(--text-muted); cursor: pointer; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; color: var(--text-muted); }
+        .input-group input, .input-group select { width: 100%; padding: 12px 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 13px; box-sizing: border-box; background: #f8fafc; outline: none; transition: 0.3s;}
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); background: white; }
+        
+        .btn-app { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; border: none; color: white; cursor: pointer; margin-top: 5px; transition: 0.2s;}
+        .btn-app:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+        .btn-info { background: var(--info); color: white;}
+
+        .profile-header { text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
+        .avatar-lg { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .edit-photo-badge { position: absolute; bottom: -5px; right: -5px; background: var(--primary); color: white; padding: 8px; border-radius: 50%; font-size: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; display: flex; align-items: center; justify-content: center;}
+        
+        .profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .stat-box { padding: 12px; border-radius: 16px; text-align: center; border: 1px solid transparent;}
+        .stat-box.deposit { background: #f0fdf4; border-color: #dcfce7; }
+        .stat-box.loan { background: #fef2f2; border-color: #fee2e2; }
+        .stat-box span { display: block; font-size: 20px; font-weight: 700; margin-bottom: 2px;}
+        .stat-box small { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+
+        /* ================= কাস্টম অ্যালার্ট ================= */
+        .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: center; z-index: 999999; visibility: hidden; opacity: 0; transition: 0.3s; padding: 20px; box-sizing: border-box;}
+        .custom-popup-overlay.active { visibility: visible; opacity: 1; }
+        .custom-popup-box { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 320px; text-align: center; transform: scale(0.9); transition: 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
+        .custom-popup-msg { margin: 0 0 20px 0; color: var(--nav-bg); font-size: 15px; font-weight: 600; line-height: 1.5; }
+
+        /* ================= অ্যাডমিন ও সিকিউরিটি লজিক ================= */
+        .admin-only { display: none !important; }
+        .admin-only-flex { display: none !important; }
+        body.admin-mode .admin-only { display: inline-block !important; }
+        body.admin-mode td.admin-only, body.admin-mode th.admin-only { display: table-cell !important; }
+        body.admin-mode div.admin-only { display: block !important; }
+        body.admin-mode .admin-only-flex { display: flex !important; }
+
+        .editable { pointer-events: none; } 
+        body.edit-mode .editable { cursor: pointer; border-bottom: 1px dashed var(--primary); position: relative; display: inline-block; pointer-events: auto;}
+        body.edit-mode .editable::after { content: ' ✏️'; font-size: 12px; opacity: 0.7; vertical-align: top; margin-left: 2px; }
+        body.edit-mode .editable:hover { opacity: 0.5; }
+
+        @media (min-width: 600px) {
+            .modal-overlay { align-items: center; }
+            .modal-content { border-radius: 24px; transform: scale(0.95); }
+            .modal-overlay.active .modal-content { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="startupLoader">
+        <div class="club-spinner"><div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><div class="dot dot4"></div></div>
+        <h2 style="color: var(--primary); font-weight: 600;" id="loaderText">সার্ভার কানেক্ট হচ্ছে...</h2>
+    </div>
+
+    <div id="actionLoader">
+        <div class="club-spinner"><div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><div class="dot dot4"></div></div>
+        <h3 id="actionLoaderText" style="color:white; margin-top: 25px; font-size: 14px; font-weight: 500;">প্রসেসিং হচ্ছে...</h3>
+    </div>
+
+    <div id="customAlert" class="custom-popup-overlay">
+        <div class="custom-popup-box">
+            <div style="font-size: 40px; color: var(--primary); margin-bottom: 10px;"><i class="fas fa-info-circle"></i></div>
+            <h3 class="custom-popup-msg" id="customAlertMsg">মেসেজ</h3>
+            <button class="btn-app btn-primary" onclick="closeCustomAlert()">ঠিক আছে</button>
+        </div>
+    </div>
+    <div id="customConfirm" class="custom-popup-overlay">
+        <div class="custom-popup-box">
+            <div style="font-size: 40px; color: var(--danger); margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3 class="custom-popup-msg" id="customConfirmMsg">আপনি কি নিশ্চিত?</h3>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-app" style="background: #e2e8f0; color: var(--text-main);" onclick="closeCustomConfirm(false)">বাতিল</button>
+                <button class="btn-app btn-danger" onclick="closeCustomConfirm(true)">হ্যাঁ, নিশ্চিত</button>
+            </div>
+        </div>
+    </div>
+    <div id="customPrompt" class="custom-popup-overlay">
+        <div class="custom-popup-box">
+            <h3 class="custom-popup-msg" id="customPromptMsg">নতুন লেখা দিন</h3>
+            <input type="text" id="customPromptInput" style="width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; margin-bottom: 15px; outline: none; font-family: 'Poppins', sans-serif;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-app" style="background: #e2e8f0; color: var(--text-main);" onclick="closeCustomPrompt(null)">বাতিল</button>
+                <button class="btn-app btn-primary" onclick="submitCustomPrompt()">সেভ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-title">
+                <img id="mainClubLogo" src="https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&name=C" class="club-logo" onclick="clickLogoUpload()">
+                <input type="file" id="clubLogoUpload" class="admin-only" style="display:none;" accept="image/*" onchange="updateClubLogo(this)">
+                <span id="txtClubName" class="editable" onclick="editUIText('txtClubName')">আমাদের ক্লাব</span>
+            </div>
+            
+            <div class="header-actions">
+                <div class="edit-switch-wrapper admin-only-flex">
+                    <span class="switch-label">📝 এডিট</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="editModeToggle" onchange="toggleEditMode()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="login-btn" id="mainLoginBtn" onclick="openAdminLogin()">
+                    <i class="fas fa-lock"></i> LOGIN
+                </button>
+            </div>
+        </header>
+
+        <div class="welcome-sec">
+            <h1 id="txtDashTitle" class="editable" onclick="editUIText('txtDashTitle')">ড্যাশবোর্ড</h1>
+            <p id="txtDashSub" class="editable" onclick="editUIText('txtDashSub')">আপনার ক্লাবের হিসাব এক নজরে দেখুন</p>
+        </div>
+
+        <div id="dashboard" class="page-section active">
+            <div class="dashboard-grid">
+                <div class="card-dark"><h3 id="txtCard1" class="editable" onclick="editUIText('txtCard1')">মোট ফান্ড (সংগ্রহ)</h3><p class="amount" id="dashTotalFund">০ ৳</p></div>
+                <div class="card-dark" style="background: #0f172a;"><h3 id="txtCard2" class="editable" onclick="editUIText('txtCard2')">বর্তমান ক্যাশ</h3><p class="amount" id="dashAvailableCash" style="color: #6ee7b7;">০ ৳</p></div>
+                <div class="card-light"><h3 id="txtCard3" class="editable" onclick="editUIText('txtCard3')">সদস্যদের ঋণ</h3><p class="amount" id="dashTotalLoan" style="color: var(--danger);">০ ৳</p></div>
+                <div class="card-light"><h3 id="txtCard4" class="editable" onclick="editUIText('txtCard4')">অনুদান প্রদান</h3><p class="amount" id="dashTotalOnudan" style="color: var(--warning);">০ ৳</p></div>
+            </div>
+            <div class="section-title"><span id="txtRecent" class="editable" onclick="editUIText('txtRecent')">সাম্প্রতিক লেনদেন</span></div>
+            <div class="list-container"><table><tbody id="recentActivityTable"></tbody></table></div>
+        </div>
+
+        <div id="members" class="page-section">
+            <div class="section-title"><span id="txtMemList" class="editable" onclick="editUIText('txtMemList')">সদস্যদের তালিকা</span></div>
+            <div class="list-container">
+                <table><thead><tr><th style="text-align:left;">নাম</th><th style="text-align:center;">মোট জমা</th><th style="text-align:right;">বর্তমান ঋণ</th></tr></thead><tbody id="membersTable"></tbody></table>
+            </div>
+        </div>
+
+        <div id="onudan" class="page-section">
+            <div class="section-title"><span id="txtDonList" class="editable" onclick="editUIText('txtDonList')">অনুদান ইতিহাস</span></div>
+            <div class="list-container">
+                <table><thead><tr><th style="text-align:left;">তারিখ ও গ্রহীতা</th><th style="text-align:right;">পরিমাণ</th><th class="admin-only" style="text-align:right;">অ্যাকশন</th></tr></thead><tbody id="donationsTable"></tbody></table>
+            </div>
+        </div>
+
+        <div id="events" class="page-section">
+            <div class="section-title"><span id="txtEvtList" class="editable" onclick="editUIText('txtEvtList')">অনুষ্ঠান আয়-ব্যয়</span></div>
+            <div class="list-container">
+                <table><thead><tr><th style="text-align:left;">অনুষ্ঠান ও বিবরণ</th><th style="text-align:right;">পরিমাণ</th><th class="admin-only" style="text-align:right;">অ্যাকশন</th></tr></thead><tbody id="eventsTable"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('dashboard', this)"><div class="nav-icon"><i class="fas fa-home"></i></div><span>হোম</span></div>
+        <div class="nav-item" onclick="switchTab('members', this)"><div class="nav-icon"><i class="fas fa-users"></i></div><span>সদস্য</span></div>
+        <div class="fab-wrapper"><button class="fab-btn" onclick="openQuickAction()"><i class="fas fa-plus"></i></button></div>
+        <div class="nav-item" onclick="switchTab('onudan', this)"><div class="nav-icon"><i class="fas fa-hands-helping"></i></div><span>অনুদান</span></div>
+        <div class="nav-item" onclick="switchTab('events', this)"><div class="nav-icon"><i class="fas fa-calendar-alt"></i></div><span>অনুষ্ঠান</span></div>
+    </div>
+
+    <div id="quickActionModal" class="modal-overlay">
+        <div class="modal-content" style="padding-bottom: 30px;">
+            <button class="close-btn" onclick="closeModal('quickActionModal')">&times;</button>
+            <h2 style="margin: 0 0 15px; font-size: 18px; color: var(--nav-bg);">নতুন রেকর্ড যোগ করুন</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="background: #f8fafc; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer;" onclick="closeModal('quickActionModal'); openModal('addMemberModal')"><div style="font-size: 24px; margin-bottom: 5px; color: var(--primary);"><i class="fas fa-user-plus"></i></div><div style="font-size: 12px; font-weight: 500;">নতুন সদস্য</div></div>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer;" onclick="closeModal('quickActionModal'); document.getElementById('donDate').value = getIsoToday(); openModal('addDonationModal')"><div style="font-size: 24px; margin-bottom: 5px; color: var(--warning);"><i class="fas fa-gift"></i></div><div style="font-size: 12px; font-weight: 500;">অনুদান দিন</div></div>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer;" onclick="closeModal('quickActionModal'); document.getElementById('eventDate').value = getIsoToday(); openModal('addEventModal')"><div style="font-size: 24px; margin-bottom: 5px; color: var(--info);"><i class="fas fa-calendar-plus"></i></div><div style="font-size: 12px; font-weight: 500;">অনুষ্ঠান হিসাব</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            <div id="loginFormArea">
+                <div style="text-align: center; font-size: 35px; margin-bottom: 5px; color: var(--primary);"><i class="fas fa-user-shield"></i></div>
+                <h2 style="margin: 0 0 15px; text-align: center; font-size: 18px;">অ্যাডমিন লগইন</h2>
+                <div class="input-group"><label>ইউজারনেম</label><input type="text" id="adminUser" placeholder="ইউজারনেম লিখুন"></div>
+                <div class="input-group"><label>পাসওয়ার্ড</label><input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন"></div>
+                <button class="btn-app btn-primary" onclick="loginAdmin()">প্রবেশ করুন</button>
+            </div>
+            <div id="logoutFormArea" style="display: none; text-align: center;">
+                <div style="font-size: 40px; margin-bottom: 10px; color: var(--danger);"><i class="fas fa-sign-out-alt"></i></div>
+                <h2 style="margin: 0 0 15px; font-size: 18px;">অ্যাডমিন প্যানেল</h2>
+                <button class="btn-app btn-info" onclick="openCredChangeModal()" style="margin-bottom: 10px;"><i class="fas fa-cog"></i> পাসওয়ার্ড পরিবর্তন করুন</button>
+                <button class="btn-app btn-danger" onclick="logoutAdmin()"><i class="fas fa-power-off"></i> লগআউট করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="changeCredModal" class="modal-overlay" style="z-index: 1005;">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('changeCredModal')">&times;</button>
+            <h2 style="margin: 0 0 15px; font-size: 16px; color: var(--nav-bg);"><i class="fas fa-key"></i> অ্যাডমিন তথ্য পরিবর্তন</h2>
+            <div class="input-group"><label>নতুন ইউজারনেম</label><input type="text" id="newAdminUser"></div>
+            <div class="input-group"><label>নতুন পাসওয়ার্ড</label><input type="password" id="newAdminPass"></div>
+            <button class="btn-app btn-primary" onclick="saveNewCredentials()">সেভ করুন</button>
+        </div>
+    </div>
+
+    <div id="memberProfileModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('memberProfileModal')">&times;</button>
+            <div class="profile-header">
+                <div style="position: relative; display: inline-block;">
+                    <img id="profImage" class="avatar-lg" src="">
+                    <label class="admin-only edit-photo-badge" title="ছবি পরিবর্তন করুন" onclick="clickProfilePhotoUpload()"><i class="fas fa-pen"></i></label>
+                    <input type="file" id="editProfilePhoto" accept="image/*" style="display:none;" onchange="updateProfilePhoto(this)">
+                </div>
+                <h2 id="profName" style="margin: 5px 0 2px; font-size: 18px;">নাম</h2>
+                <p style="margin: 0; color: var(--text-muted); font-size: 11px;">যোগদান: <span id="profDate"></span></p>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat-box deposit"><span id="profTotalKisti" style="color:var(--success);">০ ৳</span><small>মোট জমা</small></div>
+                <div class="stat-box loan"><span id="profTotalLoan" style="color:var(--danger);">০ ৳</span><small>বর্তমান ঋণ</small></div>
+            </div>
+            
+            <div class="admin-only-flex" style="margin-bottom: 15px; gap: 10px; width: 100%;">
+                <button class="btn-app btn-success" style="margin:0; flex: 1; padding: 12px; font-size: 13px;" onclick="openKistiModal()">+ কিস্তি জমা</button>
+                <button class="btn-app btn-danger" style="margin:0; flex: 1; padding: 12px; font-size: 13px;" onclick="openLoanModal()">+ ঋণ প্রদান</button>
+            </div>
+
+            <h3 style="font-size: 13px; margin-bottom: 8px; color: var(--nav-bg);">লেনদেনের বিবরণ:</h3>
+            <div style="max-height: 180px; overflow-y: auto; border: 1px solid #f1f5f9; border-radius: 12px;">
+                <table class="compact-table" style="width: 100%;">
+                    <thead><tr><th style="text-align: left;">তারিখ ও বিবরণ</th><th style="text-align: center;">খাত</th><th style="text-align: right;">পরিমাণ</th><th class="admin-only" style="text-align: right; padding-right: 10px;">অ্যাকশন</th></tr></thead>
+                    <tbody id="profHistoryTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="addMemberModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('addMemberModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px;">নতুন সদস্য</h2><div class="input-group"><label>ছবি (ঐচ্ছিক)</label><input type="file" id="newMemberPhoto" accept="image/*"></div><div class="input-group"><label>নাম</label><input type="text" id="newMemberName"></div><div class="input-group"><label>যোগদানের তারিখ</label><input type="date" id="newMemberDate"></div><button class="btn-app btn-primary" onclick="addNewMember()">সেভ করুন</button></div></div>
+    <div id="kistiModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('kistiModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--success);">কিস্তি জমা</h2><div class="input-group"><label>তারিখ</label><input type="date" id="kistiDate"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="kistiAmount" value="2000"></div><button class="btn-app btn-success" onclick="submitKisti()">নিশ্চিত করুন</button></div></div>
+    <div id="loanModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('loanModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--danger);">ঋণ প্রদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="loanDate"></div><div class="input-group"><label>পরিমাণ</label><select id="loanAmount"><option value="50000">৫০,০০০ ৳</option><option value="100000">১,০০,০০০ ৳</option></select></div><button class="btn-app btn-danger" onclick="submitLoan()">কনফার্ম করুন</button></div></div>
+    <div id="addDonationModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('addDonationModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--warning);">নতুন অনুদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="donDate"></div><div class="input-group"><label>গ্রহীতা</label><input type="text" id="donName"></div><div class="input-group"><label>কারণ</label><input type="text" id="donReason"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="donAmount"></div><button class="btn-app" style="background:var(--warning)" onclick="addNewDonation()">প্রদান করুন</button></div></div>
+    <div id="addEventModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('addEventModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--info);">অনুষ্ঠান হিসাব</h2><div class="input-group"><label>তারিখ</label><input type="date" id="eventDate"></div><div class="input-group"><label>নাম</label><input type="text" id="eventName"></div><div class="input-group"><label>বিবরণ</label><input type="text" id="eventDesc"></div><div class="input-group"><label>খাত</label><select id="eventType"><option value="আয়">আয় (+)</option><option value="ব্যয়">ব্যয় (-)</option></select></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="eventAmount"></div><button class="btn-app btn-info" onclick="saveEventData()">সেভ করুন</button></div></div>
+    <div id="editUniversalModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('editUniversalModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px;">হিসাব এডিট করুন</h2><div class="input-group" id="editNameGroup"><label>নাম</label><input type="text" id="editUName"></div><div class="input-group" id="editDescGroup"><label>বিবরণ</label><input type="text" id="editUDesc"></div><div class="input-group"><label>তারিখ</label><input type="date" id="editUDate"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="editUAmount"></div><button class="btn-app btn-primary" onclick="saveEditedUniversal()">সেভ করুন</button></div></div>
+
+    <script>
+        // আপনার দেওয়া আসল Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtOtkK97hcpdraUiRIN3u_c4uN2K_v3e0",
+            authDomain: "club-app-f25c8.firebaseapp.com",
+            databaseURL: "https://club-app-f25c8-default-rtdb.firebaseio.com",
+            projectId: "club-app-f25c8",
+            storageBucket: "club-app-f25c8.firebasestorage.app",
+            messagingSenderId: "41305793806",
+            appId: "1:41305793806:web:5f5f8efded5384ca0e235f"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const placeholderImg = "https://ui-avatars.com/api/?background=2b4266&color=fff&size=128&bold=true&name=";
+        let isAdmin = false;
+        let isEditMode = false;
+
+        let members = []; let donations = []; let clubEvents = [];
+        let uiTexts = { txtClubName: "আমাদের ক্লাব", txtDashTitle: "ড্যাশবোর্ড", txtDashSub: "আপনার ক্লাবের হিসাব এক নজরে দেখুন", txtCard1: "মোট ফান্ড (সংগ্রহ)", txtCard2: "বর্তমান ক্যাশ", txtCard3: "সদস্যদের ঋণ", txtCard4: "অনুদান প্রদান", txtRecent: "সাম্প্রতিক লেনদেন", txtMemList: "সদস্যদের তালিকা", txtDonList: "অনুদান ইতিহাস", txtEvtList: "অনুষ্ঠান আয়-ব্যয়" };
+        let savedLogo = "https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&name=C";
+        let savedAdminUser = 'admin'; let savedAdminPass = '12345';
+
+        let activeMemberId = null; let editType = null; let editTargetId = null;
+        let confirmCallback = null; let promptCallback = null;
+
+        function formatMoney(amount) { return amount.toLocaleString('en-IN') + " ৳"; }
+        function getIsoToday() { let d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().split('T')[0]; }
+        function formatDateBangla(dStr) { return new Date(dStr || new Date()).toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' }); }
+
+        function saveData() {
+            db.ref('clubData').set({
+                members: members, donations: donations, clubEvents: clubEvents,
+                uiTexts: uiTexts, savedLogo: savedLogo, savedAdminUser: savedAdminUser, savedAdminPass: savedAdminPass
+            });
+        }
+
+        let isFirstLoad = true;
+        db.ref('clubData').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                members = data.members || []; donations = data.donations || []; clubEvents = data.clubEvents || [];
+                if(data.uiTexts) uiTexts = data.uiTexts;
+                if(data.savedLogo) savedLogo = data.savedLogo;
+                if(data.savedAdminUser) savedAdminUser = data.savedAdminUser;
+                if(data.savedAdminPass) savedAdminPass = data.savedAdminPass;
+            }
+            document.getElementById('mainClubLogo').src = savedLogo;
+            for (let key in uiTexts) { if(document.getElementById(key)) document.getElementById(key).innerText = uiTexts[key]; }
+            document.title = uiTexts.txtClubName || "আমাদের ক্লাব";
+            renderUI();
+
+            if(isFirstLoad) {
+                setTimeout(() => { document.getElementById('startupLoader').style.opacity = '0'; setTimeout(() => document.getElementById('startupLoader').style.display = 'none', 400); }, 500);
+                isFirstLoad = false;
+            }
+        });
+
+        function processAction(callback, loadingText = 'প্রসেসিং হচ্ছে...') {
+            document.getElementById('actionLoaderText').innerText = loadingText;
+            document.getElementById('actionLoader').classList.add('active');
+            setTimeout(() => { callback(); saveData(); document.getElementById('actionLoader').classList.remove('active'); }, 800);
+        }
+
+        // ================= কাস্টম পপ-আপ =================
+        function showCustomAlert(msg) { document.getElementById('customAlertMsg').innerText = msg; document.getElementById('customAlert').classList.add('active'); }
+        function closeCustomAlert() { document.getElementById('customAlert').classList.remove('active'); }
+        function showCustomConfirm(msg, callback) { document.getElementById('customConfirmMsg').innerText = msg; confirmCallback = callback; document.getElementById('customConfirm').classList.add('active'); }
+        function closeCustomConfirm(res) { document.getElementById('customConfirm').classList.remove('active'); if(confirmCallback) confirmCallback(res); }
+        function showCustomPrompt(msg, defaultVal, callback) { document.getElementById('customPromptMsg').innerText = msg; document.getElementById('customPromptInput').value = defaultVal || ''; promptCallback = callback; document.getElementById('customPrompt').classList.add('active'); }
+        function closeCustomPrompt(val) { document.getElementById('customPrompt').classList.remove('active'); if(promptCallback) promptCallback(val); }
+        function submitCustomPrompt() { closeCustomPrompt(document.getElementById('customPromptInput').value); }
+
+        // ================= হার্ড সিকিউরিটি ও অ্যাডমিন লজিক =================
+        function openAdminLogin() {
+            if(isAdmin) { document.getElementById('loginFormArea').style.display = 'none'; document.getElementById('logoutFormArea').style.display = 'block'; } 
+            else { document.getElementById('loginFormArea').style.display = 'block'; document.getElementById('logoutFormArea').style.display = 'none'; }
+            openModal('loginModal');
+        }
+
+        function loginAdmin() {
+            let u = document.getElementById('adminUser').value; let p = document.getElementById('adminPass').value;
+            if(u === savedAdminUser && p === savedAdminPass) {
+                processAction(() => { 
+                    isAdmin = true; document.body.classList.add('admin-mode'); 
+                    const loginBtn = document.getElementById('mainLoginBtn');
+                    loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> LOGOUT';
+                    loginBtn.classList.add('logged-in');
+                    closeModal('loginModal'); showCustomAlert('অ্যাডমিন প্যানেল চালু হয়েছে।'); 
+                }, "লগইন ভেরিফাই করা হচ্ছে...");
+            } else { processAction(() => { showCustomAlert('ইউজারনেম বা পাসওয়ার্ড ভুল হয়েছে!'); }, "ভেরিফাই করা হচ্ছে..."); }
+        }
+        
+        function logoutAdmin() {
+            processAction(() => { 
+                isAdmin = false; isEditMode = false;
+                document.body.classList.remove('admin-mode'); document.body.classList.remove('edit-mode');
+                document.getElementById('editModeToggle').checked = false; 
+                const loginBtn = document.getElementById('mainLoginBtn');
+                loginBtn.innerHTML = '<i class="fas fa-lock"></i> LOGIN';
+                loginBtn.classList.remove('logged-in');
+                document.getElementById('adminPass').value = ''; document.getElementById('adminUser').value = '';
+                closeModal('loginModal'); showCustomAlert('লগআউট সম্পন্ন হয়েছে।'); 
+            }, "লগআউট করা হচ্ছে...");
+        }
+
+        function toggleEditMode() {
+            if (!isAdmin) { document.getElementById('editModeToggle').checked = false; showCustomAlert("এডিট মোড চালু করতে প্রথমে অ্যাডমিন লগইন করুন।"); return; }
+            isEditMode = document.getElementById('editModeToggle').checked;
+            if (isEditMode) { document.body.classList.add('edit-mode'); showCustomAlert('এডিট মোড চালু হয়েছে! এখন আপনি ওয়েবসাইটের যেকোনো লেখায় ক্লিক করে তা পরিবর্তন করতে পারবেন।'); } 
+            else { document.body.classList.remove('edit-mode'); showCustomAlert('এডিট মোড বন্ধ করা হয়েছে।'); }
+        }
+
+        function openCredChangeModal() { closeModal('loginModal'); document.getElementById('newAdminUser').value = savedAdminUser; document.getElementById('newAdminPass').value = ''; openModal('changeCredModal'); }
+        function saveNewCredentials() {
+            if (!isAdmin) return;
+            let nU = document.getElementById('newAdminUser').value; let nP = document.getElementById('newAdminPass').value;
+            if(nU.trim() !== "" && nP.trim() !== "") {
+                processAction(() => { savedAdminUser = nU.trim(); savedAdminPass = nP.trim(); closeModal('changeCredModal'); showCustomAlert('ইউজারনেম ও পাসওয়ার্ড পরিবর্তন হয়েছে!'); }, "আপডেট হচ্ছে...");
+            } else { showCustomAlert("সঠিক তথ্য দিন!"); }
+        }
+
+        function editUIText(elementId) {
+            if(!isAdmin || !isEditMode) return;
+            let currentText = document.getElementById(elementId).innerText;
+            showCustomPrompt("নতুন লেখা দিন:", currentText, function(newText) {
+                if(newText && newText.trim() !== "") { uiTexts[elementId] = newText.trim(); document.getElementById(elementId).innerText = newText.trim(); saveData(); }
+            });
+        }
+
+        function clickLogoUpload() { if(isAdmin && isEditMode) { document.getElementById('clubLogoUpload').click(); } else if (isAdmin) { showCustomAlert("লোগো পরিবর্তন করতে উপরে ডানদিকের 'এডিট মোড' চালু করুন।"); } }
+        function clickProfilePhotoUpload() { if(isAdmin && isEditMode) { document.getElementById('editProfilePhoto').click(); } else if (isAdmin) { showCustomAlert("ছবি পরিবর্তন করতে উপরে ডানদিকের 'এডিট মোড' চালু করুন।"); } }
+        function updateClubLogo(input) { if(!isAdmin) return; if(input.files && input.files[0]) { processAction(() => { let r = new FileReader(); r.onload = e => { savedLogo = e.target.result; document.getElementById('mainClubLogo').src = savedLogo; }; r.readAsDataURL(input.files[0]); }, "লোগো আপডেট হচ্ছে..."); } }
+        function updateProfilePhoto(input) { if(!isAdmin) return; if(input.files && input.files[0]) { processAction(() => { let r = new FileReader(); r.onload = e => { let m = members.find(x => x.id === activeMemberId); m.img = e.target.result; document.getElementById('profImage').src = m.img; renderUI(); }; r.readAsDataURL(input.files[0]); }, "ছবি আপডেট হচ্ছে..."); } }
+
+        function renderUI() {
+            let totalFund = 0; let totalLoanGiven = 0; let totalDonation = 0; let eventIncome = 0; let eventExpense = 0;
+            let mHtml = ''; let dHtml = ''; let eHtml = ''; let recentActs = [];
+
+            members.forEach(m => {
+                m.totalKisti = 0; m.totalLoan = 0;
+                if(m.history) { m.history.forEach(h => { if(h.type === "কিস্তি জমা") m.totalKisti += h.amount; if(h.type === "ঋণ গ্রহণ") m.totalLoan += h.amount; }); }
+                totalFund += m.totalKisti; totalLoanGiven += m.totalLoan;
+                
+                mHtml += `<tr><td style="text-align:left;"><div class="clickable-name" onclick="openProfile(${m.id})"><img src="${m.img}" class="avatar-sm"> <span>${m.name}</span></div></td><td style="color: var(--success); font-weight: 600; text-align:center;">${formatMoney(m.totalKisti)}</td><td style="color: var(--danger); font-weight: 600; text-align:right;">${formatMoney(m.totalLoan)}</td></tr>`;
+                if(m.history) { m.history.forEach(h => recentActs.push({date: h.date, rawDate: h.rawDate, name: m.name, type: h.type, amount: h.amount, color: h.color})); }
+            });
+            document.getElementById('membersTable').innerHTML = mHtml;
+
+            donations.forEach(d => {
+                totalDonation += d.amount;
+                dHtml += `<tr><td style="text-align:left;"><div style="font-weight:600; color:var(--nav-bg);">${d.name}</div><div style="font-size:10px; color:var(--text-muted);">${d.date}</div></td><td style="color: var(--warning); font-weight: 600; text-align:right;">${formatMoney(d.amount)}</td><td class="admin-only" style="text-align: right;"><button class="action-icon" onclick="openEdit('don', ${d.id})"><i class="fas fa-pen"></i></button> <button class="action-icon" onclick="deleteItem('don', ${d.id})"><i class="fas fa-trash-alt"></i></button></td></tr>`;
+                recentActs.push({date: d.date, rawDate: d.rawDate, name: d.name, type: "অনুদান", amount: d.amount, color: "warning"});
+            });
+            document.getElementById('donationsTable').innerHTML = dHtml;
+
+            clubEvents.forEach(e => {
+                if(e.type === 'আয়') eventIncome += e.amount; else eventExpense += e.amount;
+                let cClass = e.type === 'আয়' ? 'success' : 'danger'; let sign = e.type === 'আয়' ? '+' : '-';
+                eHtml += `<tr><td style="text-align:left;"><div style="font-weight:600; color:var(--nav-bg);">${e.name} <span class="badge ${e.type === 'আয়' ? 'green' : 'red'}">${e.type}</span></div><div style="font-size:10px; color:var(--text-muted);">${e.date}</div></td><td style="color: var(--${cClass}); font-weight: 600; text-align:right;">${sign} ${formatMoney(e.amount)}</td><td class="admin-only" style="text-align: right;"><button class="action-icon" onclick="openEdit('event', ${e.id})"><i class="fas fa-pen"></i></button> <button class="action-icon" onclick="deleteItem('event', ${e.id})"><i class="fas fa-trash-alt"></i></button></td></tr>`;
+                recentActs.push({date: e.date, rawDate: e.rawDate, name: e.name + " (" + e.type + ")", type: "অনুষ্ঠান", amount: e.amount, color: "info"});
+            });
+            document.getElementById('eventsTable').innerHTML = eHtml;
+
+            document.getElementById('dashTotalFund').innerText = formatMoney(totalFund); document.getElementById('dashTotalLoan').innerText = formatMoney(totalLoanGiven);
+            document.getElementById('dashTotalOnudan').innerText = formatMoney(totalDonation); document.getElementById('dashAvailableCash').innerText = formatMoney((totalFund + eventIncome) - (totalLoanGiven + totalDonation + eventExpense));
+
+            recentActs.sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate)); let actHtml = '';
+            recentActs.slice(0, 5).forEach(act => {
+                let sign = (act.type === 'কিস্তি জমা' || act.name.includes('আয়')) ? '+' : '-';
+                let amtColor = act.color === 'green' ? 'success' : (act.color === 'warning' ? 'warning' : (act.color === 'info' ? 'info' : 'danger'));
+                actHtml += `<tr><td style="text-align:left;"><div style="font-weight:600; color:var(--nav-bg); font-size: 12px;">${act.name}</div><div style="font-size:10px; color:var(--text-muted);">${act.date}</div></td><td style="text-align:center;"><span class="badge ${act.color}">${act.type}</span></td><td style="color: var(--${amtColor}); font-weight: 600; text-align:right;">${sign} ${formatMoney(act.amount)}</td></tr>`;
+            });
+            document.getElementById('recentActivityTable').innerHTML = actHtml;
+        }
+
+        function switchTab(tabId, btn) { document.querySelectorAll('.page-section').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); }); const selectedTab = document.getElementById(tabId); selectedTab.style.display = 'block'; setTimeout(() => selectedTab.classList.add('active'), 10); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        
+        function openQuickAction() { if(!isAdmin) { showCustomAlert('তথ্য যোগ করতে LOGIN বাটনে ক্লিক করে অ্যাডমিন প্যানেলে প্রবেশ করুন।'); return; } openModal('quickActionModal'); }
+        function openKistiModal() { if(!isAdmin) { showCustomAlert("অ্যাডমিন লগইন প্রয়োজন!"); return; } document.getElementById('kistiDate').value = getIsoToday(); openModal('kistiModal'); }
+        function openLoanModal() { if(!isAdmin) { showCustomAlert("অ্যাডমিন লগইন প্রয়োজন!"); return; } document.getElementById('loanDate').value = getIsoToday(); openModal('loanModal'); }
+
+        function addNewMember() {
+            if(!isAdmin) return;
+            let name = document.getElementById('newMemberName').value; let rawD = document.getElementById('newMemberDate').value; let photo = document.getElementById('newMemberPhoto');
+            if(!name) { showCustomAlert('নাম দিন!'); return; } let finalD = formatDateBangla(rawD || getIsoToday());
+            processAction(() => {
+                if(photo.files && photo.files[0]) { let r = new FileReader(); r.onload = e => { members.unshift({ id: Date.now(), name: name, img: e.target.result, joinDate: finalD, history: [] }); renderUI(); }; r.readAsDataURL(photo.files[0]); }
+                else { members.unshift({ id: Date.now(), name: name, img: placeholderImg + encodeURIComponent(name), joinDate: finalD, history: [] }); renderUI(); }
+                closeModal('addMemberModal'); document.getElementById('newMemberName').value = ''; document.getElementById('newMemberPhoto').value = '';
+            }, "সদস্য যুক্ত করা হচ্ছে...");
+        }
+
+        function openProfile(id) {
+            activeMemberId = id; let m = members.find(x => x.id === id);
+            let fileInput = document.getElementById('editProfilePhoto'); if(fileInput) fileInput.value = '';
+            document.getElementById('profImage').src = m.img; document.getElementById('profName').innerText = m.name; document.getElementById('profDate').innerText = m.joinDate;
+            document.getElementById('profTotalKisti').innerText = formatMoney(m.totalKisti); document.getElementById('profTotalLoan').innerText = formatMoney(m.totalLoan);
+            let histHtml = '';
+            if(m.history) {
+                [...m.history].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate)).forEach(h => {
+                    let sign = h.type === 'কিস্তি জমা' ? '+' : '-'; let bClass = h.color === 'green' ? 'green' : 'red'; let shortType = h.type === 'কিস্তি জমা' ? 'জমা' : 'ঋণ';
+                    histHtml += `<tr><td style="text-align: left;"><div style="font-weight:600; color:var(--nav-bg);">${h.type}</div><div style="font-size:10px; color:var(--text-muted);">${h.date}</div></td><td style="text-align: center;"><span class="badge ${bClass}">${shortType}</span></td><td style="color: var(--${h.color==='green'?'success':'danger'}); font-weight: 600; text-align: right;">${sign} ${formatMoney(h.amount)}</td><td class="admin-only" style="text-align: right; white-space: nowrap; padding-right: 10px;"><button class="action-icon" onclick="openEdit('trans', ${h.id})"><i class="fas fa-pen"></i></button> <button class="action-icon" onclick="deleteItem('trans', ${h.id})"><i class="fas fa-trash-alt"></i></button></td></tr>`;
+                });
+            }
+            document.getElementById('profHistoryTable').innerHTML = histHtml; openModal('memberProfileModal');
+        }
+
+        function submitKisti() {
+            if(!isAdmin) return; let amt = parseInt(document.getElementById('kistiAmount').value); let rawD = document.getElementById('kistiDate').value;
+            if(!amt) { showCustomAlert('পরিমাণ দিন!'); return; }
+            processAction(() => { let m = members.find(x => x.id === activeMemberId); if(!m.history) m.history = []; m.history.push({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), type: "কিস্তি জমা", amount: amt, color: "green" }); closeModal('kistiModal'); openProfile(activeMemberId); renderUI(); }, "জমা হচ্ছে...");
+        }
+        function submitLoan() {
+            if(!isAdmin) return; let amt = parseInt(document.getElementById('loanAmount').value); let rawD = document.getElementById('loanDate').value;
+            processAction(() => { let m = members.find(x => x.id === activeMemberId); if(!m.history) m.history = []; m.history.push({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), type: "ঋণ গ্রহণ", amount: amt, color: "red" }); closeModal('loanModal'); openProfile(activeMemberId); renderUI(); }, "সেভ হচ্ছে...");
+        }
+        function addNewDonation() {
+            if(!isAdmin) { showCustomAlert('অ্যাডমিন লগইন প্রয়োজন।'); return; } let name = document.getElementById('donName').value; let reason = document.getElementById('donReason').value; let amt = parseInt(document.getElementById('donAmount').value); let rawD = document.getElementById('donDate').value;
+            if(!name || !amt) { showCustomAlert('তথ্য দিন!'); return; }
+            processAction(() => { donations.unshift({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), name: name, reason: reason, amount: amt }); closeModal('addDonationModal'); document.getElementById('donName').value = ''; renderUI(); }, "সেভ হচ্ছে...");
+        }
+        function saveEventData() {
+            if(!isAdmin) { showCustomAlert('অ্যাডমিন লগইন প্রয়োজন।'); return; } let name = document.getElementById('eventName').value; let desc = document.getElementById('eventDesc').value; let type = document.getElementById('eventType').value; let amt = parseInt(document.getElementById('eventAmount').value); let rawD = document.getElementById('eventDate').value;
+            if(!name || !amt) { showCustomAlert('তথ্য দিন!'); return; }
+            processAction(() => { clubEvents.unshift({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), name: name, desc: desc, type: type, amount: amt }); closeModal('addEventModal'); document.getElementById('eventName').value = ''; renderUI(); }, "সেভ হচ্ছে...");
+        }
+
+        function deleteItem(type, id) {
+            if(!isAdmin) return;
+            showCustomConfirm("আপনি কি নিশ্চিত যে এটি ডিলিট করবেন?", function(confirmed) {
+                if(confirmed) {
+                    processAction(() => {
+                        if(type === 'trans') { let m = members.find(x => x.id === activeMemberId); m.history = m.history.filter(h => h.id !== id); openProfile(activeMemberId); }
+                        else if(type === 'don') { donations = donations.filter(d => d.id !== id); } else if(type === 'event') { clubEvents = clubEvents.filter(e => e.id !== id); }
+                        renderUI();
+                    }, "ডিলিট হচ্ছে...");
+                }
+            });
+        }
+
+        function openEdit(type, id) {
+            if(!isAdmin) return;
+            editType = type; editTargetId = id; document.getElementById('editNameGroup').style.display = 'none'; document.getElementById('editDescGroup').style.display = 'none';
+            let obj;
+            if(type === 'trans') { obj = members.find(x => x.id === activeMemberId).history.find(x => x.id === id); }
+            else if(type === 'don') { obj = donations.find(x => x.id === id); document.getElementById('editNameGroup').style.display = 'block'; document.getElementById('editDescGroup').style.display = 'block'; document.getElementById('editUName').value = obj.name; document.getElementById('editUDesc').value = obj.reason; }
+            else if(type === 'event') { obj = clubEvents.find(x => x.id === id); document.getElementById('editNameGroup').style.display = 'block'; document.getElementById('editDescGroup').style.display = 'block'; document.getElementById('editUName').value = obj.name; document.getElementById('editUDesc').value = obj.desc; }
+            document.getElementById('editUDate').value = obj.rawDate; document.getElementById('editUAmount').value = obj.amount; openModal('editUniversalModal');
+        }
+
+        function saveEditedUniversal() {
+            if(!isAdmin) return;
+            let newDate = document.getElementById('editUDate').value; let newAmt = parseInt(document.getElementById('editUAmount').value);
+            if(!newAmt) { showCustomAlert('পরিমাণ দিন!'); return; }
+            processAction(() => {
+                if(editType === 'trans') { let h = members.find(x => x.id === activeMemberId).history.find(x => x.id === editTargetId); h.rawDate = newDate; h.date = formatDateBangla(newDate); h.amount = newAmt; openProfile(activeMemberId); }
+                else if(editType === 'don') { let d = donations.find(x => x.id === editTargetId); d.rawDate = newDate; d.date = formatDateBangla(newDate); d.amount = newAmt; d.name = document.getElementById('editUName').value; d.reason = document.getElementById('editUDesc').value; }
+                else if(editType === 'event') { let e = clubEvents.find(x => x.id === editTargetId); e.rawDate = newDate; e.date = formatDateBangla(newDate); e.amount = newAmt; e.name = document.getElementById('editUName').value; e.desc = document.getElementById('editUDesc').value; }
+                closeModal('editUniversalModal'); renderUI();
+            }, "হিসাব আপডেট হচ্ছে...");
+        }
+
+    </script>
+</body>
+</html>
