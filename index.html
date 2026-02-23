@@ -42,29 +42,45 @@
 
         /* ================= হেডার ও বাটন ডিজাইন ================= */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 8px;}
+        .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 8px; white-space: nowrap;}
         .club-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         
-        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
 
-        .edit-switch-wrapper { display: flex; align-items: center; gap: 8px; background: white; padding: 6px 12px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .switch-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
-        .toggle-switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+        .edit-switch-wrapper { display: flex; align-items: center; gap: 6px; background: white; padding: 6px 10px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .switch-label { font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap;}
+        .toggle-switch { position: relative; display: inline-block; width: 36px; height: 20px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(16px); }
 
-        .login-btn { display: flex; align-items: center; gap: 6px; background: linear-gradient(45deg, var(--primary), #00f2fe); color: white; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); transition: 0.3s; }
+        .login-btn { display: flex; align-items: center; gap: 6px; background: linear-gradient(45deg, var(--primary), #00f2fe); color: white; padding: 8px 14px; border-radius: 30px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); transition: 0.3s; white-space: nowrap;}
         .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(59, 130, 246, 0.5); }
         .login-btn.logged-in { background: linear-gradient(45deg, var(--danger), var(--warning)); box-shadow: 0 4px 12px rgba(255, 0, 80, 0.4); }
+
+        /* ================= মোবাইল রেস্পন্সিভ (Mobile Responsive Fix) ================= */
+        @media (max-width: 450px) {
+            .header-title { font-size: 14px; gap: 5px; }
+            .club-logo { width: 30px; height: 30px; }
+            .header-actions { gap: 5px; }
+            .edit-switch-wrapper { padding: 4px 6px; gap: 4px; }
+            .switch-label { font-size: 10px; }
+            .toggle-switch { width: 30px; height: 16px; }
+            .slider:before { height: 12px; width: 12px; left: 2px; bottom: 2px; }
+            input:checked + .slider:before { transform: translateX(14px); }
+            .login-btn { padding: 6px 10px; font-size: 10px; gap: 4px; }
+            .welcome-sec h1 { font-size: 18px; }
+            .welcome-sec p { font-size: 11px; }
+            .card-dark .amount, .card-light .amount { font-size: 18px; }
+        }
 
         .welcome-sec { margin-bottom: 20px; }
         .welcome-sec h1 { margin: 0 0 2px; font-size: 22px; color: var(--nav-bg); }
         .welcome-sec p { margin: 0; color: var(--text-muted); font-size: 13px; }
 
-        /* ================= কার্ড ================= */
+        /* ================= কার্ড ও টেবিল ================= */
         .section-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
         .card-dark, .card-light { padding: 15px; border-radius: 20px; position: relative; overflow: hidden; }
@@ -75,7 +91,6 @@
         .card-light h3 { color: var(--text-muted); }
         .card-light .amount { color: var(--text-main); }
 
-        /* ================= টেবিল ================= */
         .page-section { display: none; animation: fadeIn 0.3s ease forwards; }
         .page-section.active { display: block; }
         .list-container { background: white; border-radius: 20px; padding: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.03); overflow-x: auto; border: 1px solid #f1f5f9;}
@@ -123,6 +138,7 @@
         .btn-danger { background: var(--danger); }
         .btn-info { background: var(--info); color: white;}
 
+        /* প্রোফাইল গ্রিড বাটন */
         .profile-header { text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
         .avatar-lg { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .edit-photo-badge { position: absolute; bottom: -5px; right: -5px; background: var(--primary); color: white; padding: 8px; border-radius: 50%; font-size: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; display: flex; align-items: center; justify-content: center;}
@@ -366,12 +382,15 @@
         const db = firebase.database();
 
         const placeholderImg = "https://ui-avatars.com/api/?background=2b4266&color=fff&size=128&bold=true&name=";
-        let isAdmin = false;
+        
+        // লগইন সেশন মনে রাখার ব্যবস্থা (রিলোড দিলে লগআউট হবে না)
+        let isAdmin = localStorage.getItem('clubAdminLoggedIn') === 'true';
         let isEditMode = false;
 
         let members = []; let donations = []; let clubEvents = [];
         let uiTexts = { txtClubName: "আমাদের ক্লাব", txtDashTitle: "ড্যাশবোর্ড", txtDashSub: "আপনার ক্লাবের হিসাব এক নজরে দেখুন", txtCard1: "মোট ফান্ড (সংগ্রহ)", txtCard2: "বর্তমান ক্যাশ", txtCard3: "সদস্যদের ঋণ", txtCard4: "অনুদান প্রদান", txtRecent: "সাম্প্রতিক লেনদেন", txtMemList: "সদস্যদের তালিকা", txtDonList: "অনুদান ইতিহাস", txtEvtList: "অনুষ্ঠান আয়-ব্যয়" };
         let savedLogo = "https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&name=C";
+        
         let savedAdminUser = 'admin'; let savedAdminPass = '12345';
 
         let activeMemberId = null; let editType = null; let editTargetId = null;
@@ -401,10 +420,22 @@
             document.getElementById('mainClubLogo').src = savedLogo;
             for (let key in uiTexts) { if(document.getElementById(key)) document.getElementById(key).innerText = uiTexts[key]; }
             document.title = uiTexts.txtClubName || "আমাদের ক্লাব";
+            
             renderUI();
 
             if(isFirstLoad) {
                 setTimeout(() => { document.getElementById('startupLoader').style.opacity = '0'; setTimeout(() => document.getElementById('startupLoader').style.display = 'none', 400); }, 500);
+                
+                // রিলোড দেওয়ার পর অ্যাডমিন সেশন রিস্টোর করা
+                if(isAdmin) {
+                    document.body.classList.add('admin-mode'); 
+                    const loginBtn = document.getElementById('mainLoginBtn');
+                    if (loginBtn) {
+                        loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> LOGOUT';
+                        loginBtn.classList.add('logged-in');
+                    }
+                }
+                
                 isFirstLoad = false;
             }
         });
@@ -424,7 +455,7 @@
         function closeCustomPrompt(val) { document.getElementById('customPrompt').classList.remove('active'); if(promptCallback) promptCallback(val); }
         function submitCustomPrompt() { closeCustomPrompt(document.getElementById('customPromptInput').value); }
 
-        // ================= হার্ড সিকিউরিটি ও অ্যাডমিন লজিক =================
+        // ================= অনলাইন লগইন সিস্টেম =================
         function openAdminLogin() {
             if(isAdmin) { document.getElementById('loginFormArea').style.display = 'none'; document.getElementById('logoutFormArea').style.display = 'block'; } 
             else { document.getElementById('loginFormArea').style.display = 'block'; document.getElementById('logoutFormArea').style.display = 'none'; }
@@ -435,7 +466,9 @@
             let u = document.getElementById('adminUser').value; let p = document.getElementById('adminPass').value;
             if(u === savedAdminUser && p === savedAdminPass) {
                 processAction(() => { 
-                    isAdmin = true; document.body.classList.add('admin-mode'); 
+                    isAdmin = true; 
+                    localStorage.setItem('clubAdminLoggedIn', 'true'); // সেশন সেভ করা হলো
+                    document.body.classList.add('admin-mode'); 
                     const loginBtn = document.getElementById('mainLoginBtn');
                     loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> LOGOUT';
                     loginBtn.classList.add('logged-in');
@@ -447,6 +480,7 @@
         function logoutAdmin() {
             processAction(() => { 
                 isAdmin = false; isEditMode = false;
+                localStorage.removeItem('clubAdminLoggedIn'); // সেশন মুছে ফেলা হলো
                 document.body.classList.remove('admin-mode'); document.body.classList.remove('edit-mode');
                 document.getElementById('editModeToggle').checked = false; 
                 const loginBtn = document.getElementById('mainLoginBtn');
@@ -469,7 +503,7 @@
             if (!isAdmin) return;
             let nU = document.getElementById('newAdminUser').value; let nP = document.getElementById('newAdminPass').value;
             if(nU.trim() !== "" && nP.trim() !== "") {
-                processAction(() => { savedAdminUser = nU.trim(); savedAdminPass = nP.trim(); closeModal('changeCredModal'); showCustomAlert('ইউজারনেম ও পাসওয়ার্ড পরিবর্তন হয়েছে!'); }, "আপডেট হচ্ছে...");
+                processAction(() => { savedAdminUser = nU.trim(); savedAdminPass = nP.trim(); closeModal('changeCredModal'); showCustomAlert('ইউজারনেম ও পাসওয়ার্ড সফলভাবে আপডেট হয়েছে!'); }, "আপডেট হচ্ছে...");
             } else { showCustomAlert("সঠিক তথ্য দিন!"); }
         }
 
@@ -536,8 +570,7 @@
         function openLoanModal() { if(!isAdmin) { showCustomAlert("অ্যাডমিন লগইন প্রয়োজন!"); return; } document.getElementById('loanDate').value = getIsoToday(); openModal('loanModal'); }
 
         function addNewMember() {
-            if(!isAdmin) return;
-            let name = document.getElementById('newMemberName').value; let rawD = document.getElementById('newMemberDate').value; let photo = document.getElementById('newMemberPhoto');
+            if(!isAdmin) return; let name = document.getElementById('newMemberName').value; let rawD = document.getElementById('newMemberDate').value; let photo = document.getElementById('newMemberPhoto');
             if(!name) { showCustomAlert('নাম দিন!'); return; } let finalD = formatDateBangla(rawD || getIsoToday());
             processAction(() => {
                 if(photo.files && photo.files[0]) { let r = new FileReader(); r.onload = e => { members.unshift({ id: Date.now(), name: name, img: e.target.result, joinDate: finalD, history: [] }); renderUI(); }; r.readAsDataURL(photo.files[0]); }
