@@ -1,3 +1,109 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ক্লাব ম্যানেজমেন্ট অ্যাপ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        /* ================= কালার প্যালেট ================= */
+        :root {
+            --app-bg: #eef2f6; --nav-bg: #2b4266; --primary: #3b82f6; --card-bg: #ffffff;
+            --text-main: #1e293b; --text-muted: #64748b; --success: #10b981;
+            --danger: #ff0050; --warning: #f59e0b; --info: #0ea5e9;
+        }
+
+        body { font-family: 'Poppins', 'Noto Sans Bengali', sans-serif; background-color: var(--app-bg); color: var(--text-main); margin: 0; padding: 0; overflow-x: hidden; padding-bottom: 90px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ================= 4-Dot 3D Cross লোডার ================= */
+        #startupLoader, #actionLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.4s; }
+        #startupLoader { background: #ffffff; }
+        #actionLoader { background: rgba(15, 23, 42, 0.85); visibility: hidden; opacity: 0; }
+        #actionLoader.active { visibility: visible; opacity: 1; }
+        
+        .club-spinner { position: relative; width: 40px; height: 40px; margin-bottom: 30px; }
+        .dot { position: absolute; width: 16px; height: 16px; border-radius: 50%; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+        .dot1 { background-color: var(--primary); top: 0; left: 0; animation-name: crossTL_BR; }
+        .dot2 { background-color: var(--warning); top: 0; right: 0; animation-name: crossTR_BL; }
+        .dot3 { background-color: var(--success); bottom: 0; left: 0; animation-name: crossBL_TR; }
+        .dot4 { background-color: var(--danger); bottom: 0; right: 0; animation-name: crossBR_TL; }
+
+        @keyframes crossTL_BR { 0%, 100% { transform: translate(0, 0); z-index: 2; } 25% { transform: translate(12px, 12px) scale(1.4); z-index: 2; } 50% { transform: translate(24px, 24px); z-index: 1; } 75% { transform: translate(12px, 12px) scale(0.6); z-index: 1; } }
+        @keyframes crossBR_TL { 0%, 100% { transform: translate(0, 0); z-index: 1; } 25% { transform: translate(-12px, -12px) scale(0.6); z-index: 1; } 50% { transform: translate(-24px, -24px); z-index: 2; } 75% { transform: translate(-12px, -12px) scale(1.4); z-index: 2; } }
+        @keyframes crossTR_BL { 0%, 100% { transform: translate(0, 0); z-index: 2; } 25% { transform: translate(-12px, 12px) scale(1.4); z-index: 2; } 50% { transform: translate(-24px, 24px); z-index: 1; } 75% { transform: translate(-12px, 12px) scale(0.6); z-index: 1; } }
+        @keyframes crossBL_TR { 0%, 100% { transform: translate(0, 0); z-index: 1; } 25% { transform: translate(12px, -12px) scale(0.6); z-index: 1; } 50% { transform: translate(24px, -24px); z-index: 2; } 75% { transform: translate(12px, -12px) scale(1.4); z-index: 2; } }
+
+        /* ================= হেডার ও বাটন ডিজাইন (Responsive Fixes) ================= */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
+        
+        .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+        .club-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0;}
+        #txtClubName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+
+        .edit-switch-wrapper { display: flex; align-items: center; gap: 8px; background: white; padding: 6px 12px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .switch-label { font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap;}
+        .toggle-switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .login-btn { display: flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(45deg, var(--primary), #00f2fe); color: white; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); transition: 0.3s; white-space: nowrap;}
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(59, 130, 246, 0.5); }
+        .login-btn.logged-in { background: linear-gradient(45deg, var(--danger), var(--warning)); box-shadow: 0 4px 12px rgba(255, 0, 80, 0.4); }
+
+        /* মোবাইল স্ক্রিনের জন্য জাদুকরী রেস্পন্সিভ কোড */
+        @media (max-width: 480px) {
+            .header-title { font-size: 15px; gap: 5px; }
+            .club-logo { width: 34px; height: 34px; }
+            .header-actions { gap: 8px; }
+            .edit-switch-wrapper { padding: 4px 6px; gap: 0px; }
+            .switch-label { display: none; } /* এডিট লেখা হাইড হবে, শুধু সুইচ থাকবে */
+            .toggle-switch { width: 36px; height: 18px; }
+            .slider:before { height: 14px; width: 14px; left: 2px; bottom: 2px; }
+            input:checked + .slider:before { transform: translateX(18px); }
+            .login-btn { padding: 8px; font-size: 14px; border-radius: 50%; width: 36px; height: 36px; }
+            .btn-text { display: none; } /* লগইন লেখা হাইড হবে, শুধু আইকন থাকবে */
+        }
+
+        .welcome-sec { margin-bottom: 20px; }
+        .welcome-sec h1 { margin: 0 0 2px; font-size: 22px; color: var(--nav-bg); }
+        .welcome-sec p { margin: 0; color: var(--text-muted); font-size: 13px; }
+
+        /* ================= কার্ড ও টেবিল ================= */
+        .section-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
+        .card-dark, .card-light { padding: 15px; border-radius: 20px; position: relative; overflow: hidden; }
+        .card-dark { background: var(--nav-bg); color: white; box-shadow: 0 8px 15px rgba(43, 66, 102, 0.2); }
+        .card-dark h3, .card-light h3 { margin: 0 0 5px; font-size: 12px; opacity: 0.8; font-weight: 500;}
+        .card-dark .amount, .card-light .amount { font-size: 22px; font-weight: 700; margin: 0; }
+        .card-light { background: white; box-shadow: 0 6px 12px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .card-light h3 { color: var(--text-muted); }
+        .card-light .amount { color: var(--text-main); }
+
+        .page-section { display: none; animation: fadeIn 0.3s ease forwards; }
+        .page-section.active { display: block; }
+        .list-container { background: white; border-radius: 20px; padding: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.03); overflow-x: auto; border: 1px solid #f1f5f9;}
+        table { width: 100%; border-collapse: collapse; table-layout: auto; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
+        th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        
+        .compact-table th:nth-child(1), .compact-table td:nth-child(1) { width: 40%; text-align: left; }
+        .compact-table th:nth-child(2), .compact-table td:nth-child(2) { width: 15%; text-align: center; }
+        .compact-table th:nth-child(3), .compact-table td:nth-child(3) { width: 25%; text-align: right; }
+        .compact-table th:nth-child(4), .compact-table td:nth-child(4) { width: 20%; text-align: right; }
+        
+        .clickable-name { color: var(--nav-bg); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .avatar-sm { width: 32px; height: 32px; border-radius: 10px; object-fit: cover; }
         .badge { padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; white-space: nowrap;}
         .badge.green { background: #d1fae5; color: #059669; }
@@ -32,7 +138,6 @@
         .btn-danger { background: var(--danger); }
         .btn-info { background: var(--info); color: white;}
 
-        /* প্রোফাইল গ্রিড বাটন */
         .profile-header { text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
         .avatar-lg { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .edit-photo-badge { position: absolute; bottom: -5px; right: -5px; background: var(--primary); color: white; padding: 8px; border-radius: 50%; font-size: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; display: flex; align-items: center; justify-content: center;}
@@ -115,20 +220,20 @@
         <header>
             <div class="header-title">
                 <img id="mainClubLogo" src="https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&name=C" class="club-logo" onclick="clickLogoUpload()">
-                <input type="file" id="clubLogoUpload" class="admin-only" style="display:none;" accept="image/*" onchange="updateClubLogo(this)">
+                <input type="file" id="clubLogoUpload" style="display:none;" accept="image/*" onchange="updateClubLogo(this)">
                 <span id="txtClubName" class="editable" onclick="editUIText('txtClubName')">আমাদের ক্লাব</span>
             </div>
             
             <div class="header-actions">
                 <div class="edit-switch-wrapper admin-only-flex">
-                    <span class="switch-label">📝 এডিট</span>
+                    <span class="switch-label"><i class="fas fa-edit"></i> এডিট</span>
                     <label class="toggle-switch">
                         <input type="checkbox" id="editModeToggle" onchange="toggleEditMode()">
                         <span class="slider"></span>
                     </label>
                 </div>
                 <button class="login-btn" id="mainLoginBtn" onclick="openAdminLogin()">
-                    <i class="fas fa-lock"></i> LOGIN
+                    <i class="fas fa-lock"></i> <span class="btn-text">LOGIN</span>
                 </button>
             </div>
         </header>
@@ -325,7 +430,7 @@
                     document.body.classList.add('admin-mode'); 
                     const loginBtn = document.getElementById('mainLoginBtn');
                     if (loginBtn) {
-                        loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> LOGOUT';
+                        loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
                         loginBtn.classList.add('logged-in');
                     }
                 }
@@ -361,10 +466,10 @@
             if(u === savedAdminUser && p === savedAdminPass) {
                 processAction(() => { 
                     isAdmin = true; 
-                    localStorage.setItem('clubAdminLoggedIn', 'true'); // সেশন সেভ করা হলো
+                    localStorage.setItem('clubAdminLoggedIn', 'true'); 
                     document.body.classList.add('admin-mode'); 
                     const loginBtn = document.getElementById('mainLoginBtn');
-                    loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> LOGOUT';
+                    loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
                     loginBtn.classList.add('logged-in');
                     closeModal('loginModal'); showCustomAlert('অ্যাডমিন প্যানেল চালু হয়েছে।'); 
                 }, "লগইন ভেরিফাই করা হচ্ছে...");
@@ -374,11 +479,11 @@
         function logoutAdmin() {
             processAction(() => { 
                 isAdmin = false; isEditMode = false;
-                localStorage.removeItem('clubAdminLoggedIn'); // সেশন মুছে ফেলা হলো
+                localStorage.removeItem('clubAdminLoggedIn'); 
                 document.body.classList.remove('admin-mode'); document.body.classList.remove('edit-mode');
                 document.getElementById('editModeToggle').checked = false; 
                 const loginBtn = document.getElementById('mainLoginBtn');
-                loginBtn.innerHTML = '<i class="fas fa-lock"></i> LOGIN';
+                loginBtn.innerHTML = '<i class="fas fa-lock"></i> <span class="btn-text">LOGIN</span>';
                 loginBtn.classList.remove('logged-in');
                 document.getElementById('adminPass').value = ''; document.getElementById('adminUser').value = '';
                 closeModal('loginModal'); showCustomAlert('লগআউট সম্পন্ন হয়েছে।'); 
