@@ -22,7 +22,7 @@
         .container { max-width: 800px; margin: 0 auto; padding: 15px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= নতুন লোগো লোডার (অরবিটাল ডট) ================= */
+        /* ================= অরবিটাল অ্যানিমেশন সিস্টেম ================= */
         #startupLoader, #actionLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.4s; }
         #startupLoader { background: #ffffff; }
         #actionLoader { background: rgba(15, 23, 42, 0.85); visibility: hidden; opacity: 0; }
@@ -30,52 +30,41 @@
         
         .loader-wrapper {
             position: relative;
-            width: 80px; 
-            height: 80px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 20px;
         }
-        .loader-wrapper.large {
-            width: 110px;
-            height: 110px;
-        }
+        
+        /* হেডারের ছোট লোগোর জন্য */
+        .loader-wrapper.header-size { width: 42px; height: 42px; flex-shrink: 0;}
+        /* লোডিং স্ক্রিনের বড় লোগোর জন্য */
+        .loader-wrapper.loader-size { width: 80px; height: 80px; margin: 0 auto 20px;}
+        .loader-wrapper.large { width: 110px; height: 110px; }
+
         .loader-wrapper::before, .loader-wrapper::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            border: 3px solid transparent;
+            content: ''; position: absolute; border-radius: 50%; border: solid transparent;
         }
-        .loader-wrapper::before {
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
-            border-top-color: #d97706;
-            border-bottom-color: #d97706;
-            animation: spinOrb 4s linear infinite;
-        }
-        .loader-wrapper::after {
-            top: -10px; left: -10px; right: -10px; bottom: -10px;
-            border-left-color: #059669;
-            border-right-color: #059669;
-            animation: spinOrbRev 5s linear infinite;
-        }
+        
+        /* ছোট রিংয়ের স্পেসিং */
+        .header-size::before { top: -2px; left: -2px; right: -2px; bottom: -2px; border-width: 1.5px; border-top-color: #d97706; border-bottom-color: #d97706; animation: spinOrb 4s linear infinite; }
+        .header-size::after { top: -5px; left: -5px; right: -5px; bottom: -5px; border-width: 1.5px; border-left-color: #059669; border-right-color: #059669; animation: spinOrbRev 5s linear infinite; }
+
+        /* বড় রিংয়ের স্পেসিং */
+        .loader-size::before, .large::before { top: -5px; left: -5px; right: -5px; bottom: -5px; border-width: 3px; border-top-color: #d97706; border-bottom-color: #d97706; animation: spinOrb 4s linear infinite; }
+        .loader-size::after, .large::after { top: -10px; left: -10px; right: -10px; bottom: -10px; border-width: 3px; border-left-color: #059669; border-right-color: #059669; animation: spinOrbRev 5s linear infinite; }
+
         .loader-logo {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-            position: relative;
-            z-index: 2;
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: white; position: relative; z-index: 2; cursor: pointer;
         }
+        .header-size .loader-logo { box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .loader-size .loader-logo, .large .loader-logo { box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+
         @keyframes spinOrb { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes spinOrbRev { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
 
         /* ================= হেডার ও বাটন ডিজাইন ================= */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
-        .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-        .club-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0;}
+        .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
         #txtClubName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
         
         .header-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
@@ -94,8 +83,11 @@
         .login-btn.logged-in { background: linear-gradient(45deg, var(--danger), var(--warning)); box-shadow: 0 4px 12px rgba(255, 0, 80, 0.4); }
 
         @media (max-width: 480px) {
-            .header-title { font-size: 15px; gap: 5px; }
-            .club-logo { width: 34px; height: 34px; }
+            .header-title { font-size: 15px; gap: 8px; }
+            .loader-wrapper.header-size { width: 34px; height: 34px; }
+            .header-size::before { top: -2px; left: -2px; right: -2px; bottom: -2px; }
+            .header-size::after { top: -4px; left: -4px; right: -4px; bottom: -4px; }
+            
             .header-actions { gap: 8px; }
             .edit-switch-wrapper { padding: 4px 6px; gap: 0px; }
             .switch-label { display: none; } 
@@ -192,7 +184,7 @@
         .stat-box small { font-size: 11px; font-weight: 500; color: var(--text-muted); }
 
         /* ================= কাস্টম অ্যালার্ট ================= */
-        .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: center; z-index: 999999; visibility: hidden; opacity: 0; transition: 0.3s; padding: 20px; box-sizing: border-box;}
+        .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: flex-end; z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box;}
         .custom-popup-overlay.active { visibility: visible; opacity: 1; }
         .custom-popup-box { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 320px; text-align: center; transform: scale(0.9); transition: 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
@@ -201,7 +193,7 @@
         /* ================= অ্যাডমিন ও সিকিউরিটি লজিক ================= */
         .admin-only { display: none !important; }
         .admin-only-flex { display: none !important; }
-        .super-admin-only { display: none !important; } /* শুধুমাত্র মেইন অ্যাডমিনের জন্য */
+        .super-admin-only { display: none !important; }
 
         body.admin-mode .admin-only { display: inline-block !important; }
         body.admin-mode td.admin-only, body.admin-mode th.admin-only { display: table-cell !important; }
@@ -215,7 +207,6 @@
         body.edit-mode .editable::after { content: ' ✏️'; font-size: 12px; opacity: 0.7; vertical-align: top; margin-left: 2px; }
         body.edit-mode .editable:hover { opacity: 0.5; }
 
-        /* সাব-অ্যাডমিন লিস্ট স্টাইল */
         .sub-admin-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #e2e8f0;}
 
         @media (min-width: 600px) {
@@ -229,14 +220,14 @@
 
     <div id="startupLoader">
         <div class="loader-wrapper large">
-            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" alt="Logo">
+            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="startupLogoImg">
         </div>
-        <h2 style="color: var(--primary); font-weight: 600; margin-top: 10px;" id="loaderText">সার্ভার কানেক্ট হচ্ছে...</h2>
+        <h2 style="color: var(--primary); font-weight: 600; margin-top: 25px;" id="loaderText">সার্ভার কানেক্ট হচ্ছে...</h2>
     </div>
 
     <div id="actionLoader">
-        <div class="loader-wrapper">
-            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" alt="Logo">
+        <div class="loader-wrapper loader-size">
+            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="actionLogoImg">
         </div>
         <h3 id="actionLoaderText" style="color:white; margin-top: 15px; font-size: 14px; font-weight: 500;">প্রসেসিং হচ্ছে...</h3>
     </div>
@@ -272,7 +263,9 @@
     <div class="container">
         <header>
             <div class="header-title">
-                <img id="mainClubLogo" src="https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&name=C" class="club-logo" onclick="clickLogoUpload()">
+                <div class="loader-wrapper header-size" onclick="clickLogoUpload()">
+                    <img id="mainClubLogo" src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo">
+                </div>
                 <input type="file" id="clubLogoUpload" style="display:none;" accept="image/*" onchange="updateClubLogo(this)">
                 <span id="txtClubName" class="editable" onclick="editUIText('txtClubName')">আমাদের ক্লাব</span>
             </div>
@@ -355,9 +348,8 @@
         <button class="close-btn" style="top: 20px; right: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onclick="closeModal('loginModal')">&times;</button>
         
         <div class="login-box">
-            
-            <div class="loader-wrapper" style="margin-bottom: 25px;">
-                <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" alt="Logo">
+            <div class="loader-wrapper loader-size">
+                <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="loginLogoImg">
             </div>
 
             <div id="loginFormArea">
@@ -479,7 +471,7 @@
 
         let members = []; let donations = []; let clubEvents = []; let subAdmins = [];
         let uiTexts = { txtClubName: "আমাদের ক্লাব", txtDashTitle: "ড্যাশবোর্ড", txtDashSub: "আপনার ক্লাবের হিসাব এক নজরে দেখুন", txtCard1: "মোট ফান্ড (সংগ্রহ)", txtCard2: "বর্তমান ক্যাশ", txtCard3: "সদস্যদের ঋণ", txtCard4: "অনুদান প্রদান", txtRecent: "সাম্প্রতিক লেনদেন", txtMemList: "সদস্যদের তালিকা", txtDonList: "অনুদান ইতিহাস", txtEvtList: "অনুষ্ঠান আয়-ব্যয়" };
-        let savedLogo = "https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&name=C";
+        let savedLogo = "https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg"; /* ডিফল্ট লোগো আপডেট করা হলো */
         
         let savedAdminUser = 'admin'; let savedAdminPass = '12345';
 
@@ -498,6 +490,14 @@
             });
         }
 
+        /* সমস্ত জায়গায় লোগো আপডেট করার ফাংশন */
+        function updateAllLogos(logoSrc) {
+            document.getElementById('mainClubLogo').src = logoSrc;
+            document.getElementById('startupLogoImg').src = logoSrc;
+            document.getElementById('actionLogoImg').src = logoSrc;
+            document.getElementById('loginLogoImg').src = logoSrc;
+        }
+
         let isFirstLoad = true;
         db.ref('clubData').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -508,7 +508,9 @@
                 if(data.savedAdminUser) savedAdminUser = data.savedAdminUser;
                 if(data.savedAdminPass) savedAdminPass = data.savedAdminPass;
             }
-            document.getElementById('mainClubLogo').src = savedLogo;
+            
+            updateAllLogos(savedLogo);
+            
             for (let key in uiTexts) { if(document.getElementById(key)) document.getElementById(key).innerText = uiTexts[key]; }
             document.title = uiTexts.txtClubName || "আমাদের ক্লাব";
             
@@ -700,7 +702,7 @@
                 document.getElementById('actionLoader').classList.add('active');
                 processImageUpload(input.files[0], function(base64Img) {
                     savedLogo = base64Img; 
-                    document.getElementById('mainClubLogo').src = savedLogo; 
+                    updateAllLogos(savedLogo);
                     saveData();
                     setTimeout(() => document.getElementById('actionLoader').classList.remove('active'), 500);
                 });
