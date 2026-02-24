@@ -30,7 +30,7 @@
         
         .loader-wrapper { position: relative; display: flex; justify-content: center; align-items: center; }
         
-        .loader-wrapper.header-size { width: 42px; height: 42px; flex-shrink: 0; cursor: pointer;} /* কার্সর পয়েন্টার দেওয়া হলো */
+        .loader-wrapper.header-size { width: 42px; height: 42px; flex-shrink: 0; cursor: pointer;} 
         .loader-wrapper.loader-size { width: 80px; height: 80px; margin: 0 auto 20px;}
         .loader-wrapper.large { width: 110px; height: 110px; }
 
@@ -52,8 +52,6 @@
         /* ================= হেডার ও বাটন ডিজাইন ================= */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
         .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-        
-        /* নামের উপর ক্লিক করার ফিল আনার জন্য কার্সর পয়েন্টার */
         #txtClubName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; cursor: pointer; }
         
         .header-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
@@ -255,7 +253,6 @@
                     <img id="mainClubLogo" src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo">
                 </div>
                 <input type="file" id="clubLogoUpload" style="display:none;" accept="image/*" onchange="updateClubLogo(this)">
-                
                 <span id="txtClubName" class="editable" onclick="titleClicked('txtClubName')">আমাদের ক্লাব</span>
             </div>
             
@@ -408,7 +405,11 @@
                     <input type="file" id="editProfilePhoto" accept="image/*" style="display:none;" onchange="updateProfilePhoto(this)">
                 </div>
                 <h2 id="profName" style="margin: 5px 0 2px; font-size: 18px;">নাম</h2>
-                <p style="margin: 0; color: var(--text-muted); font-size: 11px;">যোগদান: <span id="profDate"></span></p>
+                
+                <p style="margin: 0; color: var(--text-muted); font-size: 11px;">
+                    যোগদান: <span id="profDate"></span>
+                    <span class="admin-only" style="cursor:pointer; color:var(--primary); margin-left:5px; padding: 2px 5px;" onclick="openEditJoinDate()"><i class="fas fa-edit"></i></span>
+                </p>
             </div>
             
             <div class="profile-stats">
@@ -432,6 +433,19 @@
     </div>
 
     <div id="addMemberModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('addMemberModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px;">নতুন সদস্য</h2><div class="input-group"><label>ছবি (ঐচ্ছিক)</label><input type="file" id="newMemberPhoto" accept="image/*"></div><div class="input-group"><label>নাম</label><input type="text" id="newMemberName"></div><div class="input-group"><label>যোগদানের তারিখ</label><input type="date" id="newMemberDate"></div><button class="btn-app btn-primary" onclick="addNewMember()">সেভ করুন</button></div></div>
+    
+    <div id="editJoinDateModal" class="modal-overlay" style="visibility: hidden; opacity: 0;">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('editJoinDateModal')">&times;</button>
+            <h2 style="margin: 0 0 15px; font-size: 16px;">যোগদানের তারিখ পরিবর্তন</h2>
+            <div class="input-group">
+                <label>নতুন তারিখ</label>
+                <input type="date" id="editJoinDateInput">
+            </div>
+            <button class="btn-app btn-primary" onclick="saveJoinDate()">সেভ করুন</button>
+        </div>
+    </div>
+
     <div id="kistiModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('kistiModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--success);">কিস্তি জমা</h2><div class="input-group"><label>তারিখ</label><input type="date" id="kistiDate"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="kistiAmount" value="2000"></div><button class="btn-app btn-success" onclick="submitKisti()">নিশ্চিত করুন</button></div></div>
     <div id="loanModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('loanModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--danger);">ঋণ প্রদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="loanDate"></div><div class="input-group"><label>পরিমাণ</label><select id="loanAmount"><option value="50000">৫০,০০০ ৳</option><option value="100000">১,০০,০০০ ৳</option></select></div><button class="btn-app btn-danger" onclick="submitLoan()">কনফার্ম করুন</button></div></div>
     <div id="addDonationModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('addDonationModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--warning);">নতুন অনুদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="donDate"></div><div class="input-group"><label>গ্রহীতা</label><input type="text" id="donName"></div><div class="input-group"><label>কারণ</label><input type="text" id="donReason"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="donAmount"></div><button class="btn-app" style="background:var(--warning)" onclick="addNewDonation()">প্রদান করুন</button></div></div>
@@ -460,9 +474,7 @@
 
         let members = []; let donations = []; let clubEvents = []; let subAdmins = [];
         let uiTexts = { txtClubName: "আমাদের ক্লাব", txtDashTitle: "ড্যাশবোর্ড", txtDashSub: "আপনার ক্লাবের হিসাব এক নজরে দেখুন", txtCard1: "মোট ফান্ড (সংগ্রহ)", txtCard2: "বর্তমান ক্যাশ", txtCard3: "সদস্যদের ঋণ", txtCard4: "অনুদান প্রদান", txtRecent: "সাম্প্রতিক লেনদেন", txtMemList: "সদস্যদের তালিকা", txtDonList: "অনুদান ইতিহাস", txtEvtList: "অনুষ্ঠান আয়-ব্যয়" };
-        
-        /* ইমেজের ডিরেক্ট লিংক ফিক্স করা হয়েছে */
-        let savedLogo = "https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg"; 
+        let savedLogo = "https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg"; 
         
         let savedAdminUser = 'admin'; let savedAdminPass = '12345';
 
@@ -571,7 +583,6 @@
         function closeCustomPrompt(val) { closeModal('customPrompt'); if(promptCallback) promptCallback(val); }
         function submitCustomPrompt() { closeCustomPrompt(document.getElementById('customPromptInput').value); }
 
-        /* ------------------ লোগো ও নামের রিফ্রেশ সিস্টেম ------------------ */
         function reloadSite() {
             let loader = document.getElementById('actionLoader');
             document.getElementById('actionLoaderText').innerText = "রিফ্রেশ হচ্ছে...";
@@ -580,19 +591,11 @@
         }
 
         function logoClicked() {
-            if(isAdmin && isEditMode) {
-                document.getElementById('clubLogoUpload').click();
-            } else {
-                reloadSite();
-            }
+            if(isAdmin && isEditMode) { document.getElementById('clubLogoUpload').click(); } else { reloadSite(); }
         }
 
         function titleClicked(id) {
-            if(isAdmin && isEditMode) {
-                editUIText(id);
-            } else {
-                reloadSite();
-            }
+            if(isAdmin && isEditMode) { editUIText(id); } else { reloadSite(); }
         }
 
         /* ------------------ অ্যাডমিন কন্ট্রোল ------------------ */
@@ -614,21 +617,17 @@
             if(u === savedAdminUser && p === savedAdminPass) {
                 processAction(() => { 
                     isAdmin = true; isSuperAdmin = true;
-                    localStorage.setItem('clubAdminLoggedIn', 'true'); 
-                    localStorage.setItem('clubSuperAdmin', 'true'); 
+                    localStorage.setItem('clubAdminLoggedIn', 'true'); localStorage.setItem('clubSuperAdmin', 'true'); 
                     document.body.classList.add('admin-mode'); document.body.classList.add('super-admin-mode');
-                    updateLoginBtnUI();
-                    closeModal('loginModal'); showCustomAlert('মেইন অ্যাডমিন প্যানেল চালু হয়েছে।'); 
+                    updateLoginBtnUI(); closeModal('loginModal'); showCustomAlert('মেইন অ্যাডমিন প্যানেল চালু হয়েছে।'); 
                 }, "লগইন ভেরিফাই করা হচ্ছে...");
             } 
             else if (subAdmins.find(x => x.user === u && x.pass === p)) {
                 processAction(() => { 
                     isAdmin = true; isSuperAdmin = false;
-                    localStorage.setItem('clubAdminLoggedIn', 'true'); 
-                    localStorage.setItem('clubSuperAdmin', 'false'); 
+                    localStorage.setItem('clubAdminLoggedIn', 'true'); localStorage.setItem('clubSuperAdmin', 'false'); 
                     document.body.classList.add('admin-mode'); document.body.classList.remove('super-admin-mode');
-                    updateLoginBtnUI();
-                    closeModal('loginModal'); showCustomAlert('সাব-অ্যাডমিন প্যানেল চালু হয়েছে।'); 
+                    updateLoginBtnUI(); closeModal('loginModal'); showCustomAlert('সাব-অ্যাডমিন প্যানেল চালু হয়েছে।'); 
                 }, "লগইন ভেরিফাই করা হচ্ছে...");
             } else { 
                 processAction(() => { showCustomAlert('ইউজারনেম বা পাসওয়ার্ড ভুল হয়েছে!'); }, "ভেরিফাই করা হচ্ছে..."); 
@@ -637,10 +636,7 @@
         
         function updateLoginBtnUI() {
             const loginBtn = document.getElementById('mainLoginBtn');
-            if(loginBtn){
-                loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
-                loginBtn.classList.add('logged-in');
-            }
+            if(loginBtn){ loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>'; loginBtn.classList.add('logged-in'); }
         }
 
         function logoutAdmin() {
@@ -653,31 +649,21 @@
                 if(toggleBtn) toggleBtn.checked = false; 
                 
                 const loginBtn = document.getElementById('mainLoginBtn');
-                if(loginBtn){
-                    loginBtn.innerHTML = '<i class="fas fa-lock"></i> <span class="btn-text">LOGIN</span>';
-                    loginBtn.classList.remove('logged-in');
-                }
+                if(loginBtn){ loginBtn.innerHTML = '<i class="fas fa-lock"></i> <span class="btn-text">LOGIN</span>'; loginBtn.classList.remove('logged-in'); }
                 
                 document.getElementById('adminPass').value = ''; document.getElementById('adminUser').value = '';
                 closeModal('loginModal'); showCustomAlert('লগআউট সম্পন্ন হয়েছে।'); 
             }, "লগআউট করা হচ্ছে...");
         }
 
-        function openSubAdminModal() {
-            renderSubAdmins();
-            closeModal('loginModal');
-            openModal('subAdminModal');
-        }
+        function openSubAdminModal() { renderSubAdmins(); closeModal('loginModal'); openModal('subAdminModal'); }
 
         function renderSubAdmins() {
             let html = '';
             if(subAdmins.length === 0) { html = '<p style="font-size:12px; color:var(--text-muted); text-align:center;">কোনো সাব-অ্যাডমিন নেই</p>'; }
             else {
                 subAdmins.forEach(s => {
-                    html += `<div class="sub-admin-item">
-                                <div><strong style="color:var(--nav-bg);">${s.user}</strong> <br><small style="color:var(--text-muted);">পাস: ${s.pass}</small></div>
-                                <button class="action-icon" onclick="deleteSubAdmin(${s.id})"><i class="fas fa-trash-alt"></i></button>
-                             </div>`;
+                    html += `<div class="sub-admin-item"><div><strong style="color:var(--nav-bg);">${s.user}</strong> <br><small style="color:var(--text-muted);">পাস: ${s.pass}</small></div><button class="action-icon" onclick="deleteSubAdmin(${s.id})"><i class="fas fa-trash-alt"></i></button></div>`;
                 });
             }
             document.getElementById('subAdminListArea').innerHTML = html;
@@ -688,28 +674,17 @@
             if(!u || !p) { showCustomAlert("ইউজারনেম ও পাসওয়ার্ড দিন!"); return; }
             if(u === savedAdminUser || subAdmins.find(x => x.user === u)) { showCustomAlert("এই ইউজারনেমটি আগে থেকেই আছে!"); return; }
             
-            processAction(() => {
-                subAdmins.push({id: Date.now(), user: u, pass: p});
-                document.getElementById('newSubUser').value = ''; document.getElementById('newSubPass').value = '';
-                renderSubAdmins();
-            }, "অ্যাডমিন তৈরি হচ্ছে...");
+            processAction(() => { subAdmins.push({id: Date.now(), user: u, pass: p}); document.getElementById('newSubUser').value = ''; document.getElementById('newSubPass').value = ''; renderSubAdmins(); }, "অ্যাডমিন তৈরি হচ্ছে...");
         }
 
         function deleteSubAdmin(id) {
-            showCustomConfirm("এই অ্যাডমিনকে রিমুভ করবেন?", function(confirmed){
-                if(confirmed){
-                    processAction(() => {
-                        subAdmins = subAdmins.filter(x => x.id !== id);
-                        renderSubAdmins();
-                    }, "রিমুভ করা হচ্ছে...");
-                }
-            });
+            showCustomConfirm("এই অ্যাডমিনকে রিমুভ করবেন?", function(confirmed){ if(confirmed){ processAction(() => { subAdmins = subAdmins.filter(x => x.id !== id); renderSubAdmins(); }, "রিমুভ করা হচ্ছে..."); } });
         }
 
         function toggleEditMode() {
             if (!isAdmin) { document.getElementById('editModeToggle').checked = false; showCustomAlert("এডিট মোড চালু করতে প্রথমে অ্যাডমিন লগইন করুন।"); return; }
             isEditMode = document.getElementById('editModeToggle').checked;
-            if (isEditMode) { document.body.classList.add('edit-mode'); showCustomAlert('এডিট মোড চালু হয়েছে! এখন আপনি যেকোনো লেখায় ক্লিক করে তা পরিবর্তন করতে পারবেন।'); } 
+            if (isEditMode) { document.body.classList.add('edit-mode'); showCustomAlert('এডিট মোড চালু হয়েছে!'); } 
             else { document.body.classList.remove('edit-mode'); showCustomAlert('এডিট মোড বন্ধ করা হয়েছে।'); }
         }
 
@@ -717,17 +692,12 @@
         function saveNewCredentials() {
             if (!isSuperAdmin) return;
             let nU = document.getElementById('newAdminUser').value; let nP = document.getElementById('newAdminPass').value;
-            if(nU.trim() !== "" && nP.trim() !== "") {
-                processAction(() => { savedAdminUser = nU.trim(); savedAdminPass = nP.trim(); closeModal('changeCredModal'); showCustomAlert('মেইন ইউজারনেম ও পাসওয়ার্ড সফলভাবে আপডেট হয়েছে!'); }, "আপডেট হচ্ছে...");
-            } else { showCustomAlert("সঠিক তথ্য দিন!"); }
+            if(nU.trim() !== "" && nP.trim() !== "") { processAction(() => { savedAdminUser = nU.trim(); savedAdminPass = nP.trim(); closeModal('changeCredModal'); showCustomAlert('মেইন ইউজারনেম ও পাসওয়ার্ড সফলভাবে আপডেট হয়েছে!'); }, "আপডেট হচ্ছে..."); } else { showCustomAlert("সঠিক তথ্য দিন!"); }
         }
 
         function editUIText(elementId) {
-            if(!isAdmin || !isEditMode) return;
-            let currentText = document.getElementById(elementId).innerText;
-            showCustomPrompt("নতুন লেখা দিন:", currentText, function(newText) {
-                if(newText && newText.trim() !== "") { uiTexts[elementId] = newText.trim(); document.getElementById(elementId).innerText = newText.trim(); saveData(); }
-            });
+            if(!isAdmin || !isEditMode) return; let currentText = document.getElementById(elementId).innerText;
+            showCustomPrompt("নতুন লেখা দিন:", currentText, function(newText) { if(newText && newText.trim() !== "") { uiTexts[elementId] = newText.trim(); document.getElementById(elementId).innerText = newText.trim(); saveData(); } });
         }
 
         function clickProfilePhotoUpload() { if(isAdmin && isEditMode) { document.getElementById('editProfilePhoto').click(); } else if (isAdmin) { showCustomAlert("ছবি পরিবর্তন করতে 'এডিট মোড' চালু করুন।"); } }
@@ -735,51 +705,53 @@
         function updateClubLogo(input) { 
             if(!isAdmin) return; 
             if(input.files && input.files[0]) { 
-                processAction(() => {
-                    processImageUpload(input.files[0], function(base64Img) {
-                        savedLogo = base64Img; 
-                        updateAllLogos(savedLogo);
-                        saveData();
-                    });
-                }, 'লোগো আপডেট হচ্ছে...');
+                processAction(() => { processImageUpload(input.files[0], function(base64Img) { savedLogo = base64Img; updateAllLogos(savedLogo); saveData(); }); }, 'লোগো আপডেট হচ্ছে...');
             } 
         }
 
         function updateProfilePhoto(input) { 
             if(!isAdmin) return; 
             if(input.files && input.files[0]) { 
-                processAction(() => {
-                    processImageUpload(input.files[0], function(base64Img) {
-                        let m = members.find(x => x.id === activeMemberId); 
-                        m.img = base64Img; 
-                        document.getElementById('profImage').src = m.img; 
-                        renderUI(); 
-                        saveData();
-                    });
-                }, 'ছবি আপডেট হচ্ছে...');
+                processAction(() => { processImageUpload(input.files[0], function(base64Img) { let m = members.find(x => x.id === activeMemberId); m.img = base64Img; document.getElementById('profImage').src = m.img; renderUI(); saveData(); }); }, 'ছবি আপডেট হচ্ছে...');
             } 
         }
 
         function addNewMember() {
             if(!isAdmin) return; 
-            let name = document.getElementById('newMemberName').value; 
-            let rawD = document.getElementById('newMemberDate').value; 
-            let photo = document.getElementById('newMemberPhoto');
-            if(!name) { showCustomAlert('নাম দিন!'); return; } 
-            let finalD = formatDateBangla(rawD || getIsoToday());
+            let name = document.getElementById('newMemberName').value; let rawD = document.getElementById('newMemberDate').value; let photo = document.getElementById('newMemberPhoto');
+            if(!name) { showCustomAlert('নাম দিন!'); return; } let finalD = formatDateBangla(rawD || getIsoToday());
             
             processAction(() => {
                 if(photo.files && photo.files[0]) { 
-                    processImageUpload(photo.files[0], function(base64Img) {
-                        members.unshift({ id: Date.now(), name: name, img: base64Img, joinDate: finalD, history: [] }); 
-                        renderUI(); saveData(); closeModal('addMemberModal'); 
-                        document.getElementById('newMemberName').value = ''; document.getElementById('newMemberPhoto').value = '';
-                    });
+                    processImageUpload(photo.files[0], function(base64Img) { members.unshift({ id: Date.now(), name: name, img: base64Img, joinDate: finalD, rawJoinDate: rawD || getIsoToday(), history: [] }); renderUI(); saveData(); closeModal('addMemberModal'); document.getElementById('newMemberName').value = ''; document.getElementById('newMemberPhoto').value = ''; });
                 } else { 
-                    members.unshift({ id: Date.now(), name: name, img: placeholderImg + encodeURIComponent(name), joinDate: finalD, history: [] }); 
-                    renderUI(); saveData(); closeModal('addMemberModal'); document.getElementById('newMemberName').value = ''; 
+                    members.unshift({ id: Date.now(), name: name, img: placeholderImg + encodeURIComponent(name), joinDate: finalD, rawJoinDate: rawD || getIsoToday(), history: [] }); renderUI(); saveData(); closeModal('addMemberModal'); document.getElementById('newMemberName').value = ''; 
                 }
             }, 'সদস্য যুক্ত করা হচ্ছে...');
+        }
+
+        /* ------------------ যোগদানের তারিখ পরিবর্তন সিস্টেম ------------------ */
+        function openEditJoinDate() {
+            if(!isAdmin) return;
+            let m = members.find(x => x.id === activeMemberId);
+            // পুরনো মেম্বারদের rawJoinDate না থাকলে আজকের তারিখ দিয়ে রিকভার হবে
+            let currentJoinDate = m.rawJoinDate || getIsoToday(); 
+            document.getElementById('editJoinDateInput').value = currentJoinDate;
+            openModal('editJoinDateModal');
+        }
+
+        function saveJoinDate() {
+            if(!isAdmin) return;
+            let newDate = document.getElementById('editJoinDateInput').value;
+            if(!newDate) return;
+            processAction(() => {
+                let m = members.find(x => x.id === activeMemberId);
+                m.rawJoinDate = newDate;
+                m.joinDate = formatDateBangla(newDate);
+                closeModal('editJoinDateModal');
+                renderUI(); 
+                openProfile(activeMemberId); 
+            }, "তারিখ আপডেট হচ্ছে...");
         }
 
         function renderUI() {
@@ -844,15 +816,29 @@
             document.getElementById('profHistoryTable').innerHTML = histHtml; openModal('memberProfileModal');
         }
 
+        /* ------------------ লজিক আপডেট (UI প্রথমে রেন্ডার হবে) ------------------ */
         function submitKisti() {
             if(!isAdmin) return; let amt = parseInt(document.getElementById('kistiAmount').value); let rawD = document.getElementById('kistiDate').value;
             if(!amt) { showCustomAlert('পরিমাণ দিন!'); return; }
-            processAction(() => { let m = members.find(x => x.id === activeMemberId); if(!m.history) m.history = []; m.history.push({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), type: "কিস্তি জমা", amount: amt, color: "green" }); closeModal('kistiModal'); openProfile(activeMemberId); renderUI(); }, "জমা হচ্ছে...");
+            processAction(() => { 
+                let m = members.find(x => x.id === activeMemberId); if(!m.history) m.history = []; 
+                m.history.push({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), type: "কিস্তি জমা", amount: amt, color: "green" }); 
+                closeModal('kistiModal'); 
+                renderUI(); /* আগে UI ক্যালকুলেট করবে */
+                openProfile(activeMemberId); /* এরপর লাইভ আপডেট দেখাবে */
+            }, "জমা হচ্ছে...");
         }
         function submitLoan() {
             if(!isAdmin) return; let amt = parseInt(document.getElementById('loanAmount').value); let rawD = document.getElementById('loanDate').value;
-            processAction(() => { let m = members.find(x => x.id === activeMemberId); if(!m.history) m.history = []; m.history.push({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), type: "ঋণ গ্রহণ", amount: amt, color: "red" }); closeModal('loanModal'); openProfile(activeMemberId); renderUI(); }, "সেভ হচ্ছে...");
+            processAction(() => { 
+                let m = members.find(x => x.id === activeMemberId); if(!m.history) m.history = []; 
+                m.history.push({ id: Date.now(), rawDate: rawD, date: formatDateBangla(rawD), type: "ঋণ গ্রহণ", amount: amt, color: "red" }); 
+                closeModal('loanModal'); 
+                renderUI(); 
+                openProfile(activeMemberId); 
+            }, "সেভ হচ্ছে...");
         }
+        
         function addNewDonation() {
             if(!isAdmin) { showCustomAlert('অ্যাডমিন লগইন প্রয়োজন।'); return; } let name = document.getElementById('donName').value; let reason = document.getElementById('donReason').value; let amt = parseInt(document.getElementById('donAmount').value); let rawD = document.getElementById('donDate').value;
             if(!name || !amt) { showCustomAlert('তথ্য দিন!'); return; }
@@ -869,9 +855,13 @@
             showCustomConfirm("আপনি কি নিশ্চিত যে এটি ডিলিট করবেন?", function(confirmed) {
                 if(confirmed) {
                     processAction(() => {
-                        if(type === 'trans') { let m = members.find(x => x.id === activeMemberId); m.history = m.history.filter(h => h.id !== id); openProfile(activeMemberId); }
-                        else if(type === 'don') { donations = donations.filter(d => d.id !== id); } else if(type === 'event') { clubEvents = clubEvents.filter(e => e.id !== id); }
-                        renderUI();
+                        if(type === 'trans') { 
+                            let m = members.find(x => x.id === activeMemberId); m.history = m.history.filter(h => h.id !== id); 
+                            renderUI(); 
+                            openProfile(activeMemberId); 
+                        }
+                        else if(type === 'don') { donations = donations.filter(d => d.id !== id); renderUI(); } 
+                        else if(type === 'event') { clubEvents = clubEvents.filter(e => e.id !== id); renderUI(); }
                     }, "ডিলিট হচ্ছে...");
                 }
             });
@@ -892,10 +882,16 @@
             let newDate = document.getElementById('editUDate').value; let newAmt = parseInt(document.getElementById('editUAmount').value);
             if(!newAmt) { showCustomAlert('পরিমাণ দিন!'); return; }
             processAction(() => {
-                if(editType === 'trans') { let h = members.find(x => x.id === activeMemberId).history.find(x => x.id === editTargetId); h.rawDate = newDate; h.date = formatDateBangla(newDate); h.amount = newAmt; openProfile(activeMemberId); }
+                if(editType === 'trans') { 
+                    let h = members.find(x => x.id === activeMemberId).history.find(x => x.id === editTargetId); h.rawDate = newDate; h.date = formatDateBangla(newDate); h.amount = newAmt; 
+                    renderUI(); 
+                    openProfile(activeMemberId); 
+                }
                 else if(editType === 'don') { let d = donations.find(x => x.id === editTargetId); d.rawDate = newDate; d.date = formatDateBangla(newDate); d.amount = newAmt; d.name = document.getElementById('editUName').value; d.reason = document.getElementById('editUDesc').value; }
                 else if(editType === 'event') { let e = clubEvents.find(x => x.id === editTargetId); e.rawDate = newDate; e.date = formatDateBangla(newDate); e.amount = newAmt; e.name = document.getElementById('editUName').value; e.desc = document.getElementById('editUDesc').value; }
-                closeModal('editUniversalModal'); renderUI();
+                
+                closeModal('editUniversalModal'); 
+                if(editType !== 'trans') { renderUI(); }
             }, "হিসাব আপডেট হচ্ছে...");
         }
 
