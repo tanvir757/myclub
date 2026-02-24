@@ -35,9 +35,7 @@
             align-items: center;
         }
         
-        /* হেডারের ছোট লোগোর জন্য */
         .loader-wrapper.header-size { width: 42px; height: 42px; flex-shrink: 0;}
-        /* লোডিং স্ক্রিনের বড় লোগোর জন্য */
         .loader-wrapper.loader-size { width: 80px; height: 80px; margin: 0 auto 20px;}
         .loader-wrapper.large { width: 110px; height: 110px; }
 
@@ -45,17 +43,13 @@
             content: ''; position: absolute; border-radius: 50%; border: solid transparent;
         }
         
-        /* ছোট রিংয়ের স্পেসিং */
         .header-size::before { top: -2px; left: -2px; right: -2px; bottom: -2px; border-width: 1.5px; border-top-color: #d97706; border-bottom-color: #d97706; animation: spinOrb 4s linear infinite; }
         .header-size::after { top: -5px; left: -5px; right: -5px; bottom: -5px; border-width: 1.5px; border-left-color: #059669; border-right-color: #059669; animation: spinOrbRev 5s linear infinite; }
 
-        /* বড় রিংয়ের স্পেসিং */
         .loader-size::before, .large::before { top: -5px; left: -5px; right: -5px; bottom: -5px; border-width: 3px; border-top-color: #d97706; border-bottom-color: #d97706; animation: spinOrb 4s linear infinite; }
         .loader-size::after, .large::after { top: -10px; left: -10px; right: -10px; bottom: -10px; border-width: 3px; border-left-color: #059669; border-right-color: #059669; animation: spinOrbRev 5s linear infinite; }
 
-        .loader-logo {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: white; position: relative; z-index: 2; cursor: pointer;
-        }
+        .loader-logo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: white; position: relative; z-index: 2; cursor: pointer; }
         .header-size .loader-logo { box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
         .loader-size .loader-logo, .large .loader-logo { box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
 
@@ -68,7 +62,6 @@
         #txtClubName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
         
         .header-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
-
         .edit-switch-wrapper { display: flex; align-items: center; gap: 8px; background: white; padding: 6px 12px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
         .switch-label { font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap;}
         .toggle-switch { position: relative; display: inline-block; width: 42px; height: 22px; }
@@ -144,8 +137,8 @@
         .fab-btn { background: var(--primary); width: 55px; height: 55px; border-radius: 50%; border: 5px solid var(--app-bg); display: flex; justify-content: center; align-items: center; color: white; font-size: 26px; cursor: pointer; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); border: none; outline: none; }
 
         /* ================= পপ-আপ মডাল ================= */
-        .modal-overlay { visibility: hidden; opacity: 0; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: flex-end; z-index: 1000; transition: 0.3s; }
-        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: flex-end; z-index: 1000; transition: 0.3s; }
+        .modal-overlay.active { visibility: visible !important; opacity: 1 !important; }
         .modal-content { background: white; width: 100%; max-width: 500px; padding: 25px 20px 30px; border-radius: 24px 24px 0 0; transform: translateY(100%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 85vh; overflow-y: auto; box-sizing: border-box; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .close-btn { position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; font-weight: bold; color: var(--text-muted); cursor: pointer; z-index: 10; }
@@ -164,8 +157,8 @@
         .btn-outline { background: white; color: var(--nav-bg); border: 1.5px solid #e2e8f0;}
 
         /* ফুল-স্ক্রিন লগইন পেজ */
-        .full-page-modal { visibility: hidden; opacity: 0; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdfdfd; display: flex; justify-content: center; align-items: center; z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0.95) translateY(20px); overflow: hidden; }
-        .full-page-modal.active { visibility: visible; opacity: 1; transform: scale(1) translateY(0); }
+        .full-page-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdfdfd; display: flex; justify-content: center; align-items: center; z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0.95) translateY(20px); overflow: hidden; }
+        .full-page-modal.active { visibility: visible !important; opacity: 1 !important; transform: scale(1) translateY(0); }
         .glow-circle-1 { position: absolute; top: -50px; left: -50px; width: 250px; height: 250px; background: rgba(59, 130, 246, 0.15); filter: blur(60px); border-radius: 50%; z-index: 1; }
         .glow-circle-2 { position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: rgba(255, 0, 80, 0.1); filter: blur(60px); border-radius: 50%; z-index: 1; }
         .login-box { background: rgba(255, 255, 255, 0.9); width: 90%; max-width: 400px; padding: 40px 25px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); text-align: center; position: relative; z-index: 10; border: 1px solid rgba(255,255,255,0.6); backdrop-filter: blur(10px); }
@@ -184,8 +177,8 @@
         .stat-box small { font-size: 11px; font-weight: 500; color: var(--text-muted); }
 
         /* ================= কাস্টম অ্যালার্ট ================= */
-        .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: flex-end; z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box;}
-        .custom-popup-overlay.active { visibility: visible; opacity: 1; }
+        .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: center; z-index: 999999; transition: 0.3s; padding: 20px; box-sizing: border-box;}
+        .custom-popup-overlay.active { visibility: visible !important; opacity: 1 !important; }
         .custom-popup-box { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 320px; text-align: center; transform: scale(0.9); transition: 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
         .custom-popup-msg { margin: 0 0 20px 0; color: var(--nav-bg); font-size: 15px; font-weight: 600; line-height: 1.5; }
@@ -220,26 +213,26 @@
 
     <div id="startupLoader">
         <div class="loader-wrapper large">
-            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="startupLogoImg">
+            <img src="https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="startupLogoImg">
         </div>
         <h2 style="color: var(--primary); font-weight: 600; margin-top: 25px;" id="loaderText">সার্ভার কানেক্ট হচ্ছে...</h2>
     </div>
 
-    <div id="actionLoader">
+    <div id="actionLoader" style="visibility: hidden; opacity: 0;">
         <div class="loader-wrapper loader-size">
             <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="actionLogoImg">
         </div>
         <h3 id="actionLoaderText" style="color:white; margin-top: 15px; font-size: 14px; font-weight: 500;">প্রসেসিং হচ্ছে...</h3>
     </div>
 
-    <div id="customAlert" class="custom-popup-overlay">
+    <div id="customAlert" class="custom-popup-overlay" style="visibility: hidden; opacity: 0;">
         <div class="custom-popup-box">
             <div style="font-size: 40px; color: var(--primary); margin-bottom: 10px;"><i class="fas fa-info-circle"></i></div>
             <h3 class="custom-popup-msg" id="customAlertMsg">মেসেজ</h3>
             <button class="btn-app btn-primary" onclick="closeCustomAlert()">ঠিক আছে</button>
         </div>
     </div>
-    <div id="customConfirm" class="custom-popup-overlay">
+    <div id="customConfirm" class="custom-popup-overlay" style="visibility: hidden; opacity: 0;">
         <div class="custom-popup-box">
             <div style="font-size: 40px; color: var(--danger); margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i></div>
             <h3 class="custom-popup-msg" id="customConfirmMsg">আপনি কি নিশ্চিত?</h3>
@@ -249,7 +242,7 @@
             </div>
         </div>
     </div>
-    <div id="customPrompt" class="custom-popup-overlay">
+    <div id="customPrompt" class="custom-popup-overlay" style="visibility: hidden; opacity: 0;">
         <div class="custom-popup-box">
             <h3 class="custom-popup-msg" id="customPromptMsg">নতুন লেখা দিন</h3>
             <input type="text" id="customPromptInput" style="width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; margin-bottom: 15px; outline: none; font-family: 'Poppins', sans-serif;">
@@ -264,7 +257,7 @@
         <header>
             <div class="header-title">
                 <div class="loader-wrapper header-size" onclick="clickLogoUpload()">
-                    <img id="mainClubLogo" src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo">
+                    <img id="mainClubLogo" src="https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo">
                 </div>
                 <input type="file" id="clubLogoUpload" style="display:none;" accept="image/*" onchange="updateClubLogo(this)">
                 <span id="txtClubName" class="editable" onclick="editUIText('txtClubName')">আমাদের ক্লাব</span>
@@ -330,7 +323,7 @@
         <div class="nav-item" onclick="switchTab('events', this)"><div class="nav-icon"><i class="fas fa-calendar-alt"></i></div><span>অনুষ্ঠান</span></div>
     </div>
 
-    <div id="quickActionModal" class="modal-overlay">
+    <div id="quickActionModal" class="modal-overlay" style="visibility: hidden; opacity: 0;">
         <div class="modal-content" style="padding-bottom: 30px;">
             <button class="close-btn" onclick="closeModal('quickActionModal')">&times;</button>
             <h2 style="margin: 0 0 15px; font-size: 18px; color: var(--nav-bg);">নতুন রেকর্ড যোগ করুন</h2>
@@ -342,14 +335,14 @@
         </div>
     </div>
 
-    <div id="loginModal" class="full-page-modal">
+    <div id="loginModal" class="full-page-modal" style="visibility: hidden; opacity: 0;">
         <div class="glow-circle-1"></div>
         <div class="glow-circle-2"></div>
         <button class="close-btn" style="top: 20px; right: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onclick="closeModal('loginModal')">&times;</button>
         
         <div class="login-box">
             <div class="loader-wrapper loader-size">
-                <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="loginLogoImg">
+                <img src="https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="loginLogoImg">
             </div>
 
             <div id="loginFormArea">
@@ -381,7 +374,7 @@
         </div>
     </div>
 
-    <div id="subAdminModal" class="modal-overlay" style="z-index: 2005;">
+    <div id="subAdminModal" class="modal-overlay" style="z-index: 2005; visibility: hidden; opacity: 0;">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('subAdminModal')">&times;</button>
             <h2 style="margin: 0 0 15px; font-size: 18px; color: var(--nav-bg);"><i class="fas fa-users-cog"></i> সাব-অ্যাডমিন প্যানেল</h2>
@@ -399,7 +392,7 @@
         </div>
     </div>
 
-    <div id="changeCredModal" class="modal-overlay" style="z-index: 2005;">
+    <div id="changeCredModal" class="modal-overlay" style="z-index: 2005; visibility: hidden; opacity: 0;">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('changeCredModal')">&times;</button>
             <h2 style="margin: 0 0 15px; font-size: 16px; color: var(--nav-bg);"><i class="fas fa-key"></i> মেইন অ্যাডমিন তথ্য পরিবর্তন</h2>
@@ -409,7 +402,7 @@
         </div>
     </div>
 
-    <div id="memberProfileModal" class="modal-overlay">
+    <div id="memberProfileModal" class="modal-overlay" style="visibility: hidden; opacity: 0;">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('memberProfileModal')">&times;</button>
             <div class="profile-header">
@@ -442,12 +435,12 @@
         </div>
     </div>
 
-    <div id="addMemberModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('addMemberModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px;">নতুন সদস্য</h2><div class="input-group"><label>ছবি (ঐচ্ছিক)</label><input type="file" id="newMemberPhoto" accept="image/*"></div><div class="input-group"><label>নাম</label><input type="text" id="newMemberName"></div><div class="input-group"><label>যোগদানের তারিখ</label><input type="date" id="newMemberDate"></div><button class="btn-app btn-primary" onclick="addNewMember()">সেভ করুন</button></div></div>
-    <div id="kistiModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('kistiModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--success);">কিস্তি জমা</h2><div class="input-group"><label>তারিখ</label><input type="date" id="kistiDate"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="kistiAmount" value="2000"></div><button class="btn-app btn-success" onclick="submitKisti()">নিশ্চিত করুন</button></div></div>
-    <div id="loanModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('loanModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--danger);">ঋণ প্রদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="loanDate"></div><div class="input-group"><label>পরিমাণ</label><select id="loanAmount"><option value="50000">৫০,০০০ ৳</option><option value="100000">১,০০,০০০ ৳</option></select></div><button class="btn-app btn-danger" onclick="submitLoan()">কনফার্ম করুন</button></div></div>
-    <div id="addDonationModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('addDonationModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--warning);">নতুন অনুদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="donDate"></div><div class="input-group"><label>গ্রহীতা</label><input type="text" id="donName"></div><div class="input-group"><label>কারণ</label><input type="text" id="donReason"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="donAmount"></div><button class="btn-app" style="background:var(--warning)" onclick="addNewDonation()">প্রদান করুন</button></div></div>
-    <div id="addEventModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('addEventModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--info);">অনুষ্ঠান হিসাব</h2><div class="input-group"><label>তারিখ</label><input type="date" id="eventDate"></div><div class="input-group"><label>নাম</label><input type="text" id="eventName"></div><div class="input-group"><label>বিবরণ</label><input type="text" id="eventDesc"></div><div class="input-group"><label>খাত</label><select id="eventType"><option value="আয়">আয় (+)</option><option value="ব্যয়">ব্যয় (-)</option></select></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="eventAmount"></div><button class="btn-app btn-info" onclick="saveEventData()">সেভ করুন</button></div></div>
-    <div id="editUniversalModal" class="modal-overlay"><div class="modal-content"><button class="close-btn" onclick="closeModal('editUniversalModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px;">হিসাব এডিট করুন</h2><div class="input-group" id="editNameGroup"><label>নাম</label><input type="text" id="editUName"></div><div class="input-group" id="editDescGroup"><label>বিবরণ</label><input type="text" id="editUDesc"></div><div class="input-group"><label>তারিখ</label><input type="date" id="editUDate"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="editUAmount"></div><button class="btn-app btn-primary" onclick="saveEditedUniversal()">সেভ করুন</button></div></div>
+    <div id="addMemberModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('addMemberModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px;">নতুন সদস্য</h2><div class="input-group"><label>ছবি (ঐচ্ছিক)</label><input type="file" id="newMemberPhoto" accept="image/*"></div><div class="input-group"><label>নাম</label><input type="text" id="newMemberName"></div><div class="input-group"><label>যোগদানের তারিখ</label><input type="date" id="newMemberDate"></div><button class="btn-app btn-primary" onclick="addNewMember()">সেভ করুন</button></div></div>
+    <div id="kistiModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('kistiModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--success);">কিস্তি জমা</h2><div class="input-group"><label>তারিখ</label><input type="date" id="kistiDate"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="kistiAmount" value="2000"></div><button class="btn-app btn-success" onclick="submitKisti()">নিশ্চিত করুন</button></div></div>
+    <div id="loanModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('loanModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--danger);">ঋণ প্রদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="loanDate"></div><div class="input-group"><label>পরিমাণ</label><select id="loanAmount"><option value="50000">৫০,০০০ ৳</option><option value="100000">১,০০,০০০ ৳</option></select></div><button class="btn-app btn-danger" onclick="submitLoan()">কনফার্ম করুন</button></div></div>
+    <div id="addDonationModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('addDonationModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--warning);">নতুন অনুদান</h2><div class="input-group"><label>তারিখ</label><input type="date" id="donDate"></div><div class="input-group"><label>গ্রহীতা</label><input type="text" id="donName"></div><div class="input-group"><label>কারণ</label><input type="text" id="donReason"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="donAmount"></div><button class="btn-app" style="background:var(--warning)" onclick="addNewDonation()">প্রদান করুন</button></div></div>
+    <div id="addEventModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('addEventModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px; color:var(--info);">অনুষ্ঠান হিসাব</h2><div class="input-group"><label>তারিখ</label><input type="date" id="eventDate"></div><div class="input-group"><label>নাম</label><input type="text" id="eventName"></div><div class="input-group"><label>বিবরণ</label><input type="text" id="eventDesc"></div><div class="input-group"><label>খাত</label><select id="eventType"><option value="আয়">আয় (+)</option><option value="ব্যয়">ব্যয় (-)</option></select></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="eventAmount"></div><button class="btn-app btn-info" onclick="saveEventData()">সেভ করুন</button></div></div>
+    <div id="editUniversalModal" class="modal-overlay" style="visibility: hidden; opacity: 0;"><div class="modal-content"><button class="close-btn" onclick="closeModal('editUniversalModal')">&times;</button><h2 style="margin: 0 0 15px; font-size: 16px;">হিসাব এডিট করুন</h2><div class="input-group" id="editNameGroup"><label>নাম</label><input type="text" id="editUName"></div><div class="input-group" id="editDescGroup"><label>বিবরণ</label><input type="text" id="editUDesc"></div><div class="input-group"><label>তারিখ</label><input type="date" id="editUDate"></div><div class="input-group"><label>পরিমাণ</label><input type="number" id="editUAmount"></div><button class="btn-app btn-primary" onclick="saveEditedUniversal()">সেভ করুন</button></div></div>
 
     <script>
         const firebaseConfig = {
@@ -471,7 +464,9 @@
 
         let members = []; let donations = []; let clubEvents = []; let subAdmins = [];
         let uiTexts = { txtClubName: "আমাদের ক্লাব", txtDashTitle: "ড্যাশবোর্ড", txtDashSub: "আপনার ক্লাবের হিসাব এক নজরে দেখুন", txtCard1: "মোট ফান্ড (সংগ্রহ)", txtCard2: "বর্তমান ক্যাশ", txtCard3: "সদস্যদের ঋণ", txtCard4: "অনুদান প্রদান", txtRecent: "সাম্প্রতিক লেনদেন", txtMemList: "সদস্যদের তালিকা", txtDonList: "অনুদান ইতিহাস", txtEvtList: "অনুষ্ঠান আয়-ব্যয়" };
-        let savedLogo = "https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg"; /* ডিফল্ট লোগো আপডেট করা হলো */
+        
+        /* ইমেজের লিংক ঠিক করা হয়েছে */
+        let savedLogo = "https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg"; 
         
         let savedAdminUser = 'admin'; let savedAdminPass = '12345';
 
@@ -490,12 +485,11 @@
             });
         }
 
-        /* সমস্ত জায়গায় লোগো আপডেট করার ফাংশন */
         function updateAllLogos(logoSrc) {
-            document.getElementById('mainClubLogo').src = logoSrc;
-            document.getElementById('startupLogoImg').src = logoSrc;
-            document.getElementById('actionLogoImg').src = logoSrc;
-            document.getElementById('loginLogoImg').src = logoSrc;
+            if(document.getElementById('mainClubLogo')) document.getElementById('mainClubLogo').src = logoSrc;
+            if(document.getElementById('startupLogoImg')) document.getElementById('startupLogoImg').src = logoSrc;
+            if(document.getElementById('actionLogoImg')) document.getElementById('actionLogoImg').src = logoSrc;
+            if(document.getElementById('loginLogoImg')) document.getElementById('loginLogoImg').src = logoSrc;
         }
 
         let isFirstLoad = true;
@@ -553,17 +547,32 @@
         }
 
         function processAction(callback, loadingText = 'প্রসেসিং হচ্ছে...') {
+            let loader = document.getElementById('actionLoader');
             document.getElementById('actionLoaderText').innerText = loadingText;
-            document.getElementById('actionLoader').classList.add('active');
-            setTimeout(() => { callback(); saveData(); document.getElementById('actionLoader').classList.remove('active'); }, 800);
+            loader.style.visibility = 'visible'; loader.style.opacity = '1'; loader.classList.add('active');
+            
+            setTimeout(() => { 
+                callback(); saveData(); 
+                loader.style.visibility = 'hidden'; loader.style.opacity = '0'; loader.classList.remove('active'); 
+            }, 800);
         }
 
-        function showCustomAlert(msg) { document.getElementById('customAlertMsg').innerText = msg; document.getElementById('customAlert').classList.add('active'); }
-        function closeCustomAlert() { document.getElementById('customAlert').classList.remove('active'); }
-        function showCustomConfirm(msg, callback) { document.getElementById('customConfirmMsg').innerText = msg; confirmCallback = callback; document.getElementById('customConfirm').classList.add('active'); }
-        function closeCustomConfirm(res) { document.getElementById('customConfirm').classList.remove('active'); if(confirmCallback) confirmCallback(res); }
-        function showCustomPrompt(msg, defaultVal, callback) { document.getElementById('customPromptMsg').innerText = msg; document.getElementById('customPromptInput').value = defaultVal || ''; promptCallback = callback; document.getElementById('customPrompt').classList.add('active'); }
-        function closeCustomPrompt(val) { document.getElementById('customPrompt').classList.remove('active'); if(promptCallback) promptCallback(val); }
+        /* ------------------ মডাল সেফটি কন্ট্রোল ------------------ */
+        function openModal(id) { 
+            let el = document.getElementById(id);
+            if(el) { el.style.visibility = 'visible'; el.style.opacity = '1'; el.classList.add('active'); }
+        }
+        function closeModal(id) { 
+            let el = document.getElementById(id);
+            if(el) { el.style.visibility = 'hidden'; el.style.opacity = '0'; el.classList.remove('active'); }
+        }
+
+        function showCustomAlert(msg) { document.getElementById('customAlertMsg').innerText = msg; openModal('customAlert'); }
+        function closeCustomAlert() { closeModal('customAlert'); }
+        function showCustomConfirm(msg, callback) { document.getElementById('customConfirmMsg').innerText = msg; confirmCallback = callback; openModal('customConfirm'); }
+        function closeCustomConfirm(res) { closeModal('customConfirm'); if(confirmCallback) confirmCallback(res); }
+        function showCustomPrompt(msg, defaultVal, callback) { document.getElementById('customPromptMsg').innerText = msg; document.getElementById('customPromptInput').value = defaultVal || ''; promptCallback = callback; openModal('customPrompt'); }
+        function closeCustomPrompt(val) { closeModal('customPrompt'); if(promptCallback) promptCallback(val); }
         function submitCustomPrompt() { closeCustomPrompt(document.getElementById('customPromptInput').value); }
 
         function openAdminLogin() {
@@ -607,8 +616,10 @@
         
         function updateLoginBtnUI() {
             const loginBtn = document.getElementById('mainLoginBtn');
-            loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
-            loginBtn.classList.add('logged-in');
+            if(loginBtn){
+                loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
+                loginBtn.classList.add('logged-in');
+            }
         }
 
         function logoutAdmin() {
@@ -616,10 +627,16 @@
                 isAdmin = false; isSuperAdmin = false; isEditMode = false;
                 localStorage.removeItem('clubAdminLoggedIn'); localStorage.removeItem('clubSuperAdmin');
                 document.body.classList.remove('admin-mode'); document.body.classList.remove('super-admin-mode'); document.body.classList.remove('edit-mode');
-                document.getElementById('editModeToggle').checked = false; 
+                
+                let toggleBtn = document.getElementById('editModeToggle');
+                if(toggleBtn) toggleBtn.checked = false; 
+                
                 const loginBtn = document.getElementById('mainLoginBtn');
-                loginBtn.innerHTML = '<i class="fas fa-lock"></i> <span class="btn-text">LOGIN</span>';
-                loginBtn.classList.remove('logged-in');
+                if(loginBtn){
+                    loginBtn.innerHTML = '<i class="fas fa-lock"></i> <span class="btn-text">LOGIN</span>';
+                    loginBtn.classList.remove('logged-in');
+                }
+                
                 document.getElementById('adminPass').value = ''; document.getElementById('adminUser').value = '';
                 closeModal('loginModal'); showCustomAlert('লগআউট সম্পন্ন হয়েছে।'); 
             }, "লগআউট করা হচ্ছে...");
@@ -698,30 +715,28 @@
         function updateClubLogo(input) { 
             if(!isAdmin) return; 
             if(input.files && input.files[0]) { 
-                document.getElementById('actionLoaderText').innerText = 'লোগো আপডেট হচ্ছে...';
-                document.getElementById('actionLoader').classList.add('active');
-                processImageUpload(input.files[0], function(base64Img) {
-                    savedLogo = base64Img; 
-                    updateAllLogos(savedLogo);
-                    saveData();
-                    setTimeout(() => document.getElementById('actionLoader').classList.remove('active'), 500);
-                });
+                processAction(() => {
+                    processImageUpload(input.files[0], function(base64Img) {
+                        savedLogo = base64Img; 
+                        updateAllLogos(savedLogo);
+                        saveData();
+                    });
+                }, 'লোগো আপডেট হচ্ছে...');
             } 
         }
 
         function updateProfilePhoto(input) { 
             if(!isAdmin) return; 
             if(input.files && input.files[0]) { 
-                document.getElementById('actionLoaderText').innerText = 'ছবি আপডেট হচ্ছে...';
-                document.getElementById('actionLoader').classList.add('active');
-                processImageUpload(input.files[0], function(base64Img) {
-                    let m = members.find(x => x.id === activeMemberId); 
-                    m.img = base64Img; 
-                    document.getElementById('profImage').src = m.img; 
-                    renderUI(); 
-                    saveData();
-                    setTimeout(() => document.getElementById('actionLoader').classList.remove('active'), 500);
-                });
+                processAction(() => {
+                    processImageUpload(input.files[0], function(base64Img) {
+                        let m = members.find(x => x.id === activeMemberId); 
+                        m.img = base64Img; 
+                        document.getElementById('profImage').src = m.img; 
+                        renderUI(); 
+                        saveData();
+                    });
+                }, 'ছবি আপডেট হচ্ছে...');
             } 
         }
 
@@ -733,27 +748,18 @@
             if(!name) { showCustomAlert('নাম দিন!'); return; } 
             let finalD = formatDateBangla(rawD || getIsoToday());
             
-            document.getElementById('actionLoaderText').innerText = 'সদস্য যুক্ত করা হচ্ছে...';
-            document.getElementById('actionLoader').classList.add('active');
-
-            if(photo.files && photo.files[0]) { 
-                processImageUpload(photo.files[0], function(base64Img) {
-                    members.unshift({ id: Date.now(), name: name, img: base64Img, joinDate: finalD, history: [] }); 
-                    renderUI(); 
-                    saveData();
-                    closeModal('addMemberModal'); 
-                    document.getElementById('newMemberName').value = ''; 
-                    document.getElementById('newMemberPhoto').value = '';
-                    setTimeout(() => document.getElementById('actionLoader').classList.remove('active'), 500);
-                });
-            } else { 
-                members.unshift({ id: Date.now(), name: name, img: placeholderImg + encodeURIComponent(name), joinDate: finalD, history: [] }); 
-                renderUI(); 
-                saveData();
-                closeModal('addMemberModal'); 
-                document.getElementById('newMemberName').value = ''; 
-                setTimeout(() => document.getElementById('actionLoader').classList.remove('active'), 500);
-            }
+            processAction(() => {
+                if(photo.files && photo.files[0]) { 
+                    processImageUpload(photo.files[0], function(base64Img) {
+                        members.unshift({ id: Date.now(), name: name, img: base64Img, joinDate: finalD, history: [] }); 
+                        renderUI(); saveData(); closeModal('addMemberModal'); 
+                        document.getElementById('newMemberName').value = ''; document.getElementById('newMemberPhoto').value = '';
+                    });
+                } else { 
+                    members.unshift({ id: Date.now(), name: name, img: placeholderImg + encodeURIComponent(name), joinDate: finalD, history: [] }); 
+                    renderUI(); saveData(); closeModal('addMemberModal'); document.getElementById('newMemberName').value = ''; 
+                }
+            }, 'সদস্য যুক্ত করা হচ্ছে...');
         }
 
         function renderUI() {
@@ -799,9 +805,6 @@
         }
 
         function switchTab(tabId, btn) { document.querySelectorAll('.page-section').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); }); const selectedTab = document.getElementById(tabId); selectedTab.style.display = 'block'; setTimeout(() => selectedTab.classList.add('active'), 10); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        
         function openQuickAction() { if(!isAdmin) { showCustomAlert('তথ্য যোগ করতে LOGIN বাটনে ক্লিক করে অ্যাডমিন প্যানেলে প্রবেশ করুন।'); return; } openModal('quickActionModal'); }
         function openKistiModal() { if(!isAdmin) { showCustomAlert("অ্যাডমিন লগইন প্রয়োজন!"); return; } document.getElementById('kistiDate').value = getIsoToday(); openModal('kistiModal'); }
         function openLoanModal() { if(!isAdmin) { showCustomAlert("অ্যাডমিন লগইন প্রয়োজন!"); return; } document.getElementById('loanDate').value = getIsoToday(); openModal('loanModal'); }
