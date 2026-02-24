@@ -22,27 +22,58 @@
         .container { max-width: 800px; margin: 0 auto; padding: 15px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= 4-Dot 3D Cross লোডার ================= */
+        /* ================= নতুন লোগো লোডার (অরবিটাল ডট) ================= */
         #startupLoader, #actionLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.4s; }
         #startupLoader { background: #ffffff; }
         #actionLoader { background: rgba(15, 23, 42, 0.85); visibility: hidden; opacity: 0; }
         #actionLoader.active { visibility: visible; opacity: 1; }
         
-        .club-spinner { position: relative; width: 40px; height: 40px; margin-bottom: 30px; }
-        .dot { position: absolute; width: 16px; height: 16px; border-radius: 50%; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
-        .dot1 { background-color: var(--primary); top: 0; left: 0; animation-name: crossTL_BR; }
-        .dot2 { background-color: var(--warning); top: 0; right: 0; animation-name: crossTR_BL; }
-        .dot3 { background-color: var(--success); bottom: 0; left: 0; animation-name: crossBL_TR; }
-        .dot4 { background-color: var(--danger); bottom: 0; right: 0; animation-name: crossBR_TL; }
-
-        @keyframes crossTL_BR { 0%, 100% { transform: translate(0, 0); z-index: 2; } 25% { transform: translate(12px, 12px) scale(1.4); z-index: 2; } 50% { transform: translate(24px, 24px); z-index: 1; } 75% { transform: translate(12px, 12px) scale(0.6); z-index: 1; } }
-        @keyframes crossBR_TL { 0%, 100% { transform: translate(0, 0); z-index: 1; } 25% { transform: translate(-12px, -12px) scale(0.6); z-index: 1; } 50% { transform: translate(-24px, -24px); z-index: 2; } 75% { transform: translate(-12px, -12px) scale(1.4); z-index: 2; } }
-        @keyframes crossTR_BL { 0%, 100% { transform: translate(0, 0); z-index: 2; } 25% { transform: translate(-12px, 12px) scale(1.4); z-index: 2; } 50% { transform: translate(-24px, 24px); z-index: 1; } 75% { transform: translate(-12px, 12px) scale(0.6); z-index: 1; } }
-        @keyframes crossBL_TR { 0%, 100% { transform: translate(0, 0); z-index: 1; } 25% { transform: translate(12px, -12px) scale(0.6); z-index: 1; } 50% { transform: translate(24px, -24px); z-index: 2; } 75% { transform: translate(12px, -12px) scale(1.4); z-index: 2; } }
+        .loader-wrapper {
+            position: relative;
+            width: 80px; 
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+        .loader-wrapper.large {
+            width: 110px;
+            height: 110px;
+        }
+        .loader-wrapper::before, .loader-wrapper::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+        .loader-wrapper::before {
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border-top-color: #d97706;
+            border-bottom-color: #d97706;
+            animation: spinOrb 4s linear infinite;
+        }
+        .loader-wrapper::after {
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border-left-color: #059669;
+            border-right-color: #059669;
+            animation: spinOrbRev 5s linear infinite;
+        }
+        .loader-logo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes spinOrb { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spinOrbRev { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
 
         /* ================= হেডার ও বাটন ডিজাইন ================= */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
-        
         .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .club-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0;}
         #txtClubName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
@@ -62,7 +93,6 @@
         .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(59, 130, 246, 0.5); }
         .login-btn.logged-in { background: linear-gradient(45deg, var(--danger), var(--warning)); box-shadow: 0 4px 12px rgba(255, 0, 80, 0.4); }
 
-        /* মোবাইল রেস্পন্সিভ */
         @media (max-width: 480px) {
             .header-title { font-size: 15px; gap: 5px; }
             .club-logo { width: 34px; height: 34px; }
@@ -105,14 +135,11 @@
         
         .clickable-name { color: var(--nav-bg); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .avatar-sm { width: 32px; height: 32px; border-radius: 10px; object-fit: cover; }
-        
-        /* 1. ব্যাজ (Badge) কালার ফিক্স করা হলো */
         .badge { padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; white-space: nowrap; display: inline-block;}
         .badge.green { background: #d1fae5; color: #059669; }
         .badge.red { background: #fee2e2; color: #b91c1c; }
-        .badge.warning { background: #fef3c7; color: #d97706; } /* অনুদান ব্যাজ */
-        .badge.info { background: #e0f2fe; color: #0284c7; } /* অনুষ্ঠান ব্যাজ */
-        
+        .badge.warning { background: #fef3c7; color: #d97706; } 
+        .badge.info { background: #e0f2fe; color: #0284c7; }
         .action-icon { background: #f1f5f9; border: none; border-radius: 6px; padding: 6px 8px; cursor: pointer; color: var(--text-muted); font-size: 13px; margin-left: 3px; transition: 0.2s;}
         .action-icon:hover { background: #e2e8f0; color: var(--danger); }
 
@@ -124,7 +151,7 @@
         .fab-wrapper { position: relative; top: -30px; display: flex; justify-content: center; width: 60px; }
         .fab-btn { background: var(--primary); width: 55px; height: 55px; border-radius: 50%; border: 5px solid var(--app-bg); display: flex; justify-content: center; align-items: center; color: white; font-size: 26px; cursor: pointer; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); border: none; outline: none; }
 
-        /* ================= সাধারণ পপ-আপ মডাল ================= */
+        /* ================= পপ-আপ মডাল ================= */
         .modal-overlay { visibility: hidden; opacity: 0; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: flex-end; z-index: 1000; transition: 0.3s; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-content { background: white; width: 100%; max-width: 500px; padding: 25px 20px 30px; border-radius: 24px 24px 0 0; transform: translateY(100%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 85vh; overflow-y: auto; box-sizing: border-box; }
@@ -142,6 +169,16 @@
         .btn-success { background: var(--success); }
         .btn-danger { background: var(--danger); }
         .btn-info { background: var(--info); color: white;}
+        .btn-outline { background: white; color: var(--nav-bg); border: 1.5px solid #e2e8f0;}
+
+        /* ফুল-স্ক্রিন লগইন পেজ */
+        .full-page-modal { visibility: hidden; opacity: 0; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdfdfd; display: flex; justify-content: center; align-items: center; z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0.95) translateY(20px); overflow: hidden; }
+        .full-page-modal.active { visibility: visible; opacity: 1; transform: scale(1) translateY(0); }
+        .glow-circle-1 { position: absolute; top: -50px; left: -50px; width: 250px; height: 250px; background: rgba(59, 130, 246, 0.15); filter: blur(60px); border-radius: 50%; z-index: 1; }
+        .glow-circle-2 { position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: rgba(255, 0, 80, 0.1); filter: blur(60px); border-radius: 50%; z-index: 1; }
+        .login-box { background: rgba(255, 255, 255, 0.9); width: 90%; max-width: 400px; padding: 40px 25px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); text-align: center; position: relative; z-index: 10; border: 1px solid rgba(255,255,255,0.6); backdrop-filter: blur(10px); }
+        .btn-login-submit { background: linear-gradient(90deg, var(--danger), #ff5e62, var(--warning)); background-size: 200% auto; color: white; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.5s; box-shadow: 0 8px 20px rgba(255, 0, 80, 0.3); border: none; margin-top: 15px; }
+        .btn-login-submit:hover { background-position: right center; box-shadow: 0 10px 25px rgba(255, 0, 80, 0.4); }
 
         .profile-header { text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
         .avatar-lg { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
@@ -154,33 +191,6 @@
         .stat-box span { display: block; font-size: 20px; font-weight: 700; margin-bottom: 2px;}
         .stat-box small { font-size: 11px; font-weight: 500; color: var(--text-muted); }
 
-        /* ================= ২. নতুন ফুল-স্ক্রিন লগইন পেজ ডিজাইন ================= */
-        .full-page-modal {
-            visibility: hidden; opacity: 0; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #fdfdfd; display: flex; justify-content: center; align-items: center; 
-            z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            transform: scale(0.95) translateY(20px); overflow: hidden;
-        }
-        .full-page-modal.active { visibility: visible; opacity: 1; transform: scale(1) translateY(0); }
-        
-        /* লগইন পেজের ব্যাকগ্রাউন্ড গ্লো ইফেক্ট */
-        .glow-circle-1 { position: absolute; top: -50px; left: -50px; width: 250px; height: 250px; background: rgba(59, 130, 246, 0.15); filter: blur(60px); border-radius: 50%; z-index: 1; }
-        .glow-circle-2 { position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: rgba(255, 0, 80, 0.1); filter: blur(60px); border-radius: 50%; z-index: 1; }
-
-        .login-box {
-            background: rgba(255, 255, 255, 0.9); width: 90%; max-width: 400px; padding: 40px 25px; 
-            border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); 
-            text-align: center; position: relative; z-index: 10;
-            border: 1px solid rgba(255,255,255,0.6); backdrop-filter: blur(10px);
-        }
-
-        /* স্পেশাল গ্রেডিয়েন্ট লগইন বাটন */
-        .btn-login-submit {
-            background: linear-gradient(90deg, var(--danger), #ff5e62, var(--warning));
-            background-size: 200% auto; color: white; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.5s; box-shadow: 0 8px 20px rgba(255, 0, 80, 0.3); border: none; margin-top: 15px;
-        }
-        .btn-login-submit:hover { background-position: right center; box-shadow: 0 10px 25px rgba(255, 0, 80, 0.4); }
-
         /* ================= কাস্টম অ্যালার্ট ================= */
         .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: flex; justify-content: center; align-items: center; z-index: 999999; visibility: hidden; opacity: 0; transition: 0.3s; padding: 20px; box-sizing: border-box;}
         .custom-popup-overlay.active { visibility: visible; opacity: 1; }
@@ -191,15 +201,22 @@
         /* ================= অ্যাডমিন ও সিকিউরিটি লজিক ================= */
         .admin-only { display: none !important; }
         .admin-only-flex { display: none !important; }
+        .super-admin-only { display: none !important; } /* শুধুমাত্র মেইন অ্যাডমিনের জন্য */
+
         body.admin-mode .admin-only { display: inline-block !important; }
         body.admin-mode td.admin-only, body.admin-mode th.admin-only { display: table-cell !important; }
         body.admin-mode div.admin-only { display: block !important; }
         body.admin-mode .admin-only-flex { display: flex !important; }
+        
+        body.super-admin-mode .super-admin-only { display: block !important; }
 
         .editable { pointer-events: none; } 
         body.edit-mode .editable { cursor: pointer; border-bottom: 1px dashed var(--primary); position: relative; display: inline-block; pointer-events: auto;}
         body.edit-mode .editable::after { content: ' ✏️'; font-size: 12px; opacity: 0.7; vertical-align: top; margin-left: 2px; }
         body.edit-mode .editable:hover { opacity: 0.5; }
+
+        /* সাব-অ্যাডমিন লিস্ট স্টাইল */
+        .sub-admin-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #e2e8f0;}
 
         @media (min-width: 600px) {
             .modal-overlay { align-items: center; }
@@ -211,13 +228,17 @@
 <body>
 
     <div id="startupLoader">
-        <div class="club-spinner"><div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><div class="dot dot4"></div></div>
-        <h2 style="color: var(--primary); font-weight: 600;" id="loaderText">সার্ভার কানেক্ট হচ্ছে...</h2>
+        <div class="loader-wrapper large">
+            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" alt="Logo">
+        </div>
+        <h2 style="color: var(--primary); font-weight: 600; margin-top: 10px;" id="loaderText">সার্ভার কানেক্ট হচ্ছে...</h2>
     </div>
 
     <div id="actionLoader">
-        <div class="club-spinner"><div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><div class="dot dot4"></div></div>
-        <h3 id="actionLoaderText" style="color:white; margin-top: 25px; font-size: 14px; font-weight: 500;">প্রসেসিং হচ্ছে...</h3>
+        <div class="loader-wrapper">
+            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" alt="Logo">
+        </div>
+        <h3 id="actionLoaderText" style="color:white; margin-top: 15px; font-size: 14px; font-weight: 500;">প্রসেসিং হচ্ছে...</h3>
     </div>
 
     <div id="customAlert" class="custom-popup-overlay">
@@ -334,8 +355,9 @@
         <button class="close-btn" style="top: 20px; right: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onclick="closeModal('loginModal')">&times;</button>
         
         <div class="login-box">
-            <div class="club-spinner" style="margin: 0 auto 30px;">
-                <div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><div class="dot dot4"></div>
+            
+            <div class="loader-wrapper" style="margin-bottom: 25px;">
+                <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" alt="Logo">
             </div>
 
             <div id="loginFormArea">
@@ -355,10 +377,32 @@
             <div id="logoutFormArea" style="display: none;">
                 <div style="font-size: 60px; color: var(--success); margin-bottom: 15px;"><i class="fas fa-check-circle"></i></div>
                 <h1 style="margin: 0 0 5px; font-size: 24px; color: var(--nav-bg);">অ্যাডমিন প্যানেল</h1>
-                <p style="margin: 0 0 25px; color: var(--text-muted); font-size: 14px;">আপনি সফলভাবে লগইন করা আছেন</p>
+                <p id="loggedInMsg" style="margin: 0 0 25px; color: var(--text-muted); font-size: 14px;">আপনি সফলভাবে লগইন করা আছেন</p>
                 
-                <button class="btn-app" style="background: var(--info); padding: 16px; margin-bottom: 15px;" onclick="openCredChangeModal()"><i class="fas fa-cog"></i> পাসওয়ার্ড পরিবর্তন</button>
+                <div class="super-admin-only">
+                    <button class="btn-app btn-outline" style="padding: 14px; margin-bottom: 10px;" onclick="openCredChangeModal()"><i class="fas fa-key"></i> মেইন পাসওয়ার্ড পরিবর্তন</button>
+                    <button class="btn-app" style="background: var(--nav-bg); padding: 14px; margin-bottom: 15px;" onclick="openSubAdminModal()"><i class="fas fa-users-cog"></i> সাব-অ্যাডমিন ম্যানেজ করুন</button>
+                </div>
+
                 <button class="btn-app" style="background: #fee2e2; color: var(--danger); padding: 16px;" onclick="logoutAdmin()"><i class="fas fa-power-off"></i> লগআউট করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="subAdminModal" class="modal-overlay" style="z-index: 2005;">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('subAdminModal')">&times;</button>
+            <h2 style="margin: 0 0 15px; font-size: 18px; color: var(--nav-bg);"><i class="fas fa-users-cog"></i> সাব-অ্যাডমিন প্যানেল</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">সাব-অ্যাডমিনরা লগইন করে হিসাব রাখতে পারবে, কিন্তু আপনার পাসওয়ার্ড বদলাতে পারবে না।</p>
+            
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                <div class="input-group"><label>ইউজারনেম</label><input type="text" id="newSubUser" placeholder="যেমন: karim"></div>
+                <div class="input-group"><label>পাসওয়ার্ড</label><input type="text" id="newSubPass" placeholder="যেমন: 5678"></div>
+                <button class="btn-app btn-success" onclick="addSubAdmin()">+ নতুন অ্যাডমিন যোগ করুন</button>
+            </div>
+
+            <h3 style="font-size: 14px; margin-bottom: 10px;">বর্তমান সাব-অ্যাডমিন লিস্ট:</h3>
+            <div id="subAdminListArea" style="max-height: 180px; overflow-y: auto;">
             </div>
         </div>
     </div>
@@ -366,7 +410,7 @@
     <div id="changeCredModal" class="modal-overlay" style="z-index: 2005;">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('changeCredModal')">&times;</button>
-            <h2 style="margin: 0 0 15px; font-size: 16px; color: var(--nav-bg);"><i class="fas fa-key"></i> অ্যাডমিন তথ্য পরিবর্তন</h2>
+            <h2 style="margin: 0 0 15px; font-size: 16px; color: var(--nav-bg);"><i class="fas fa-key"></i> মেইন অ্যাডমিন তথ্য পরিবর্তন</h2>
             <div class="input-group"><label>নতুন ইউজারনেম</label><input type="text" id="newAdminUser"></div>
             <div class="input-group"><label>নতুন পাসওয়ার্ড</label><input type="password" id="newAdminPass"></div>
             <button class="btn-app btn-primary" onclick="saveNewCredentials()">সেভ করুন</button>
@@ -430,9 +474,10 @@
         const placeholderImg = "https://ui-avatars.com/api/?background=2b4266&color=fff&size=128&bold=true&name=";
         
         let isAdmin = localStorage.getItem('clubAdminLoggedIn') === 'true';
+        let isSuperAdmin = localStorage.getItem('clubSuperAdmin') === 'true'; 
         let isEditMode = false;
 
-        let members = []; let donations = []; let clubEvents = [];
+        let members = []; let donations = []; let clubEvents = []; let subAdmins = [];
         let uiTexts = { txtClubName: "আমাদের ক্লাব", txtDashTitle: "ড্যাশবোর্ড", txtDashSub: "আপনার ক্লাবের হিসাব এক নজরে দেখুন", txtCard1: "মোট ফান্ড (সংগ্রহ)", txtCard2: "বর্তমান ক্যাশ", txtCard3: "সদস্যদের ঋণ", txtCard4: "অনুদান প্রদান", txtRecent: "সাম্প্রতিক লেনদেন", txtMemList: "সদস্যদের তালিকা", txtDonList: "অনুদান ইতিহাস", txtEvtList: "অনুষ্ঠান আয়-ব্যয়" };
         let savedLogo = "https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&name=C";
         
@@ -448,7 +493,8 @@
         function saveData() {
             db.ref('clubData').set({
                 members: members, donations: donations, clubEvents: clubEvents,
-                uiTexts: uiTexts, savedLogo: savedLogo, savedAdminUser: savedAdminUser, savedAdminPass: savedAdminPass
+                uiTexts: uiTexts, savedLogo: savedLogo, savedAdminUser: savedAdminUser, savedAdminPass: savedAdminPass,
+                subAdmins: subAdmins
             });
         }
 
@@ -456,7 +502,7 @@
         db.ref('clubData').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                members = data.members || []; donations = data.donations || []; clubEvents = data.clubEvents || [];
+                members = data.members || []; donations = data.donations || []; clubEvents = data.clubEvents || []; subAdmins = data.subAdmins || [];
                 if(data.uiTexts) uiTexts = data.uiTexts;
                 if(data.savedLogo) savedLogo = data.savedLogo;
                 if(data.savedAdminUser) savedAdminUser = data.savedAdminUser;
@@ -473,6 +519,7 @@
                 
                 if(isAdmin) {
                     document.body.classList.add('admin-mode'); 
+                    if(isSuperAdmin) document.body.classList.add('super-admin-mode');
                     const loginBtn = document.getElementById('mainLoginBtn');
                     if (loginBtn) {
                         loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
@@ -518,31 +565,55 @@
         function submitCustomPrompt() { closeCustomPrompt(document.getElementById('customPromptInput').value); }
 
         function openAdminLogin() {
-            if(isAdmin) { document.getElementById('loginFormArea').style.display = 'none'; document.getElementById('logoutFormArea').style.display = 'block'; } 
-            else { document.getElementById('loginFormArea').style.display = 'block'; document.getElementById('logoutFormArea').style.display = 'none'; }
+            if(isAdmin) { 
+                document.getElementById('loginFormArea').style.display = 'none'; 
+                document.getElementById('logoutFormArea').style.display = 'block'; 
+                document.getElementById('loggedInMsg').innerText = isSuperAdmin ? "আপনি মেইন অ্যাডমিন হিসেবে আছেন" : "আপনি সাব-অ্যাডমিন হিসেবে আছেন";
+            } else { 
+                document.getElementById('loginFormArea').style.display = 'block'; 
+                document.getElementById('logoutFormArea').style.display = 'none'; 
+            }
             openModal('loginModal');
         }
 
         function loginAdmin() {
             let u = document.getElementById('adminUser').value; let p = document.getElementById('adminPass').value;
+            
             if(u === savedAdminUser && p === savedAdminPass) {
                 processAction(() => { 
-                    isAdmin = true; 
+                    isAdmin = true; isSuperAdmin = true;
                     localStorage.setItem('clubAdminLoggedIn', 'true'); 
-                    document.body.classList.add('admin-mode'); 
-                    const loginBtn = document.getElementById('mainLoginBtn');
-                    loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
-                    loginBtn.classList.add('logged-in');
-                    closeModal('loginModal'); showCustomAlert('অ্যাডমিন প্যানেল চালু হয়েছে।'); 
+                    localStorage.setItem('clubSuperAdmin', 'true'); 
+                    document.body.classList.add('admin-mode'); document.body.classList.add('super-admin-mode');
+                    updateLoginBtnUI();
+                    closeModal('loginModal'); showCustomAlert('মেইন অ্যাডমিন প্যানেল চালু হয়েছে।'); 
                 }, "লগইন ভেরিফাই করা হচ্ছে...");
-            } else { processAction(() => { showCustomAlert('ইউজারনেম বা পাসওয়ার্ড ভুল হয়েছে!'); }, "ভেরিফাই করা হচ্ছে..."); }
+            } 
+            else if (subAdmins.find(x => x.user === u && x.pass === p)) {
+                processAction(() => { 
+                    isAdmin = true; isSuperAdmin = false;
+                    localStorage.setItem('clubAdminLoggedIn', 'true'); 
+                    localStorage.setItem('clubSuperAdmin', 'false'); 
+                    document.body.classList.add('admin-mode'); document.body.classList.remove('super-admin-mode');
+                    updateLoginBtnUI();
+                    closeModal('loginModal'); showCustomAlert('সাব-অ্যাডমিন প্যানেল চালু হয়েছে।'); 
+                }, "লগইন ভেরিফাই করা হচ্ছে...");
+            } else { 
+                processAction(() => { showCustomAlert('ইউজারনেম বা পাসওয়ার্ড ভুল হয়েছে!'); }, "ভেরিফাই করা হচ্ছে..."); 
+            }
         }
         
+        function updateLoginBtnUI() {
+            const loginBtn = document.getElementById('mainLoginBtn');
+            loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> <span class="btn-text">LOGOUT</span>';
+            loginBtn.classList.add('logged-in');
+        }
+
         function logoutAdmin() {
             processAction(() => { 
-                isAdmin = false; isEditMode = false;
-                localStorage.removeItem('clubAdminLoggedIn'); 
-                document.body.classList.remove('admin-mode'); document.body.classList.remove('edit-mode');
+                isAdmin = false; isSuperAdmin = false; isEditMode = false;
+                localStorage.removeItem('clubAdminLoggedIn'); localStorage.removeItem('clubSuperAdmin');
+                document.body.classList.remove('admin-mode'); document.body.classList.remove('super-admin-mode'); document.body.classList.remove('edit-mode');
                 document.getElementById('editModeToggle').checked = false; 
                 const loginBtn = document.getElementById('mainLoginBtn');
                 loginBtn.innerHTML = '<i class="fas fa-lock"></i> <span class="btn-text">LOGIN</span>';
@@ -552,19 +623,62 @@
             }, "লগআউট করা হচ্ছে...");
         }
 
+        function openSubAdminModal() {
+            renderSubAdmins();
+            closeModal('loginModal');
+            openModal('subAdminModal');
+        }
+
+        function renderSubAdmins() {
+            let html = '';
+            if(subAdmins.length === 0) { html = '<p style="font-size:12px; color:var(--text-muted); text-align:center;">কোনো সাব-অ্যাডমিন নেই</p>'; }
+            else {
+                subAdmins.forEach(s => {
+                    html += `<div class="sub-admin-item">
+                                <div><strong style="color:var(--nav-bg);">${s.user}</strong> <br><small style="color:var(--text-muted);">পাস: ${s.pass}</small></div>
+                                <button class="action-icon" onclick="deleteSubAdmin(${s.id})"><i class="fas fa-trash-alt"></i></button>
+                             </div>`;
+                });
+            }
+            document.getElementById('subAdminListArea').innerHTML = html;
+        }
+
+        function addSubAdmin() {
+            let u = document.getElementById('newSubUser').value.trim(); let p = document.getElementById('newSubPass').value.trim();
+            if(!u || !p) { showCustomAlert("ইউজারনেম ও পাসওয়ার্ড দিন!"); return; }
+            if(u === savedAdminUser || subAdmins.find(x => x.user === u)) { showCustomAlert("এই ইউজারনেমটি আগে থেকেই আছে!"); return; }
+            
+            processAction(() => {
+                subAdmins.push({id: Date.now(), user: u, pass: p});
+                document.getElementById('newSubUser').value = ''; document.getElementById('newSubPass').value = '';
+                renderSubAdmins();
+            }, "অ্যাডমিন তৈরি হচ্ছে...");
+        }
+
+        function deleteSubAdmin(id) {
+            showCustomConfirm("এই অ্যাডমিনকে রিমুভ করবেন?", function(confirmed){
+                if(confirmed){
+                    processAction(() => {
+                        subAdmins = subAdmins.filter(x => x.id !== id);
+                        renderSubAdmins();
+                    }, "রিমুভ করা হচ্ছে...");
+                }
+            });
+        }
+
         function toggleEditMode() {
             if (!isAdmin) { document.getElementById('editModeToggle').checked = false; showCustomAlert("এডিট মোড চালু করতে প্রথমে অ্যাডমিন লগইন করুন।"); return; }
             isEditMode = document.getElementById('editModeToggle').checked;
-            if (isEditMode) { document.body.classList.add('edit-mode'); showCustomAlert('এডিট মোড চালু হয়েছে! এখন আপনি ওয়েবসাইটের যেকোনো লেখায় ক্লিক করে তা পরিবর্তন করতে পারবেন।'); } 
+            if (isEditMode) { document.body.classList.add('edit-mode'); showCustomAlert('এডিট মোড চালু হয়েছে! এখন আপনি যেকোনো লেখায় ক্লিক করে তা পরিবর্তন করতে পারবেন।'); } 
             else { document.body.classList.remove('edit-mode'); showCustomAlert('এডিট মোড বন্ধ করা হয়েছে।'); }
         }
 
         function openCredChangeModal() { closeModal('loginModal'); document.getElementById('newAdminUser').value = savedAdminUser; document.getElementById('newAdminPass').value = ''; openModal('changeCredModal'); }
         function saveNewCredentials() {
-            if (!isAdmin) return;
+            if (!isSuperAdmin) return;
             let nU = document.getElementById('newAdminUser').value; let nP = document.getElementById('newAdminPass').value;
             if(nU.trim() !== "" && nP.trim() !== "") {
-                processAction(() => { savedAdminUser = nU.trim(); savedAdminPass = nP.trim(); closeModal('changeCredModal'); showCustomAlert('ইউজারনেম ও পাসওয়ার্ড সফলভাবে আপডেট হয়েছে!'); }, "আপডেট হচ্ছে...");
+                processAction(() => { savedAdminUser = nU.trim(); savedAdminPass = nP.trim(); closeModal('changeCredModal'); showCustomAlert('মেইন ইউজারনেম ও পাসওয়ার্ড সফলভাবে আপডেট হয়েছে!'); }, "আপডেট হচ্ছে...");
             } else { showCustomAlert("সঠিক তথ্য দিন!"); }
         }
 
@@ -576,8 +690,8 @@
             });
         }
 
-        function clickLogoUpload() { if(isAdmin && isEditMode) { document.getElementById('clubLogoUpload').click(); } else if (isAdmin) { showCustomAlert("লোগো পরিবর্তন করতে উপরে ডানদিকের 'এডিট মোড' চালু করুন।"); } }
-        function clickProfilePhotoUpload() { if(isAdmin && isEditMode) { document.getElementById('editProfilePhoto').click(); } else if (isAdmin) { showCustomAlert("ছবি পরিবর্তন করতে উপরে ডানদিকের 'এডিট মোড' চালু করুন।"); } }
+        function clickLogoUpload() { if(isAdmin && isEditMode) { document.getElementById('clubLogoUpload').click(); } else if (isAdmin) { showCustomAlert("লোগো পরিবর্তন করতে 'এডিট মোড' চালু করুন।"); } }
+        function clickProfilePhotoUpload() { if(isAdmin && isEditMode) { document.getElementById('editProfilePhoto').click(); } else if (isAdmin) { showCustomAlert("ছবি পরিবর্তন করতে 'এডিট মোড' চালু করুন।"); } }
         
         function updateClubLogo(input) { 
             if(!isAdmin) return; 
@@ -676,7 +790,8 @@
             recentActs.slice(0, 5).forEach(act => {
                 let sign = (act.type === 'কিস্তি জমা' || act.name.includes('আয়')) ? '+' : '-';
                 let amtColor = act.color === 'green' ? 'success' : (act.color === 'warning' ? 'warning' : (act.color === 'info' ? 'info' : 'danger'));
-                actHtml += `<tr><td style="text-align:left;"><div style="font-weight:600; color:var(--nav-bg); font-size: 12px;">${act.name}</div><div style="font-size:10px; color:var(--text-muted);">${act.date}</div></td><td style="text-align:center;"><span class="badge ${act.color}">${act.type}</span></td><td style="color: var(--${amtColor}); font-weight: 600; text-align:right;">${sign} ${formatMoney(act.amount)}</td></tr>`;
+                let badgeClass = 'info'; if(act.type === 'কিস্তি জমা') badgeClass = 'green'; else if(act.type === 'ঋণ গ্রহণ') badgeClass = 'red'; else if(act.type === 'অনুদান') badgeClass = 'warning';
+                actHtml += `<tr><td style="text-align:left;"><div style="font-weight:600; color:var(--nav-bg); font-size: 12px;">${act.name}</div><div style="font-size:10px; color:var(--text-muted);">${act.date}</div></td><td style="text-align:center;"><span class="badge ${badgeClass}">${act.type}</span></td><td style="color: var(--${amtColor}); font-weight: 600; text-align:right;">${sign} ${formatMoney(act.amount)}</td></tr>`;
             });
             document.getElementById('recentActivityTable').innerHTML = actHtml;
         }
