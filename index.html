@@ -28,20 +28,13 @@
         #actionLoader { background: rgba(15, 23, 42, 0.85); visibility: hidden; opacity: 0; }
         #actionLoader.active { visibility: visible; opacity: 1; }
         
-        .loader-wrapper {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .loader-wrapper { position: relative; display: flex; justify-content: center; align-items: center; }
         
-        .loader-wrapper.header-size { width: 42px; height: 42px; flex-shrink: 0;}
+        .loader-wrapper.header-size { width: 42px; height: 42px; flex-shrink: 0; cursor: pointer;} /* কার্সর পয়েন্টার দেওয়া হলো */
         .loader-wrapper.loader-size { width: 80px; height: 80px; margin: 0 auto 20px;}
         .loader-wrapper.large { width: 110px; height: 110px; }
 
-        .loader-wrapper::before, .loader-wrapper::after {
-            content: ''; position: absolute; border-radius: 50%; border: solid transparent;
-        }
+        .loader-wrapper::before, .loader-wrapper::after { content: ''; position: absolute; border-radius: 50%; border: solid transparent; }
         
         .header-size::before { top: -2px; left: -2px; right: -2px; bottom: -2px; border-width: 1.5px; border-top-color: #d97706; border-bottom-color: #d97706; animation: spinOrb 4s linear infinite; }
         .header-size::after { top: -5px; left: -5px; right: -5px; bottom: -5px; border-width: 1.5px; border-left-color: #059669; border-right-color: #059669; animation: spinOrbRev 5s linear infinite; }
@@ -49,7 +42,7 @@
         .loader-size::before, .large::before { top: -5px; left: -5px; right: -5px; bottom: -5px; border-width: 3px; border-top-color: #d97706; border-bottom-color: #d97706; animation: spinOrb 4s linear infinite; }
         .loader-size::after, .large::after { top: -10px; left: -10px; right: -10px; bottom: -10px; border-width: 3px; border-left-color: #059669; border-right-color: #059669; animation: spinOrbRev 5s linear infinite; }
 
-        .loader-logo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: white; position: relative; z-index: 2; cursor: pointer; }
+        .loader-logo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: white; position: relative; z-index: 2; }
         .header-size .loader-logo { box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
         .loader-size .loader-logo, .large .loader-logo { box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
 
@@ -59,7 +52,9 @@
         /* ================= হেডার ও বাটন ডিজাইন ================= */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
         .header-title { font-size: 18px; font-weight: 600; color: var(--nav-bg); display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-        #txtClubName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        
+        /* নামের উপর ক্লিক করার ফিল আনার জন্য কার্সর পয়েন্টার */
+        #txtClubName { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; cursor: pointer; }
         
         .header-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
         .edit-switch-wrapper { display: flex; align-items: center; gap: 8px; background: white; padding: 6px 12px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
@@ -213,7 +208,7 @@
 
     <div id="startupLoader">
         <div class="loader-wrapper large">
-            <img src="https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="startupLogoImg">
+            <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="startupLogoImg">
         </div>
         <h2 style="color: var(--primary); font-weight: 600; margin-top: 25px;" id="loaderText">সার্ভার কানেক্ট হচ্ছে...</h2>
     </div>
@@ -256,11 +251,12 @@
     <div class="container">
         <header>
             <div class="header-title">
-                <div class="loader-wrapper header-size" onclick="clickLogoUpload()">
-                    <img id="mainClubLogo" src="https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo">
+                <div class="loader-wrapper header-size" onclick="logoClicked()">
+                    <img id="mainClubLogo" src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo">
                 </div>
                 <input type="file" id="clubLogoUpload" style="display:none;" accept="image/*" onchange="updateClubLogo(this)">
-                <span id="txtClubName" class="editable" onclick="editUIText('txtClubName')">আমাদের ক্লাব</span>
+                
+                <span id="txtClubName" class="editable" onclick="titleClicked('txtClubName')">আমাদের ক্লাব</span>
             </div>
             
             <div class="header-actions">
@@ -342,7 +338,7 @@
         
         <div class="login-box">
             <div class="loader-wrapper loader-size">
-                <img src="https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="loginLogoImg">
+                <img src="https://i.ibb.co.com/Sht6fH5/FB-IMG-1771878652590.jpg" class="loader-logo" id="loginLogoImg">
             </div>
 
             <div id="loginFormArea">
@@ -465,7 +461,7 @@
         let members = []; let donations = []; let clubEvents = []; let subAdmins = [];
         let uiTexts = { txtClubName: "আমাদের ক্লাব", txtDashTitle: "ড্যাশবোর্ড", txtDashSub: "আপনার ক্লাবের হিসাব এক নজরে দেখুন", txtCard1: "মোট ফান্ড (সংগ্রহ)", txtCard2: "বর্তমান ক্যাশ", txtCard3: "সদস্যদের ঋণ", txtCard4: "অনুদান প্রদান", txtRecent: "সাম্প্রতিক লেনদেন", txtMemList: "সদস্যদের তালিকা", txtDonList: "অনুদান ইতিহাস", txtEvtList: "অনুষ্ঠান আয়-ব্যয়" };
         
-        /* ইমেজের লিংক ঠিক করা হয়েছে */
+        /* ইমেজের ডিরেক্ট লিংক ফিক্স করা হয়েছে */
         let savedLogo = "https://i.ibb.co/Sht6fH5/FB-IMG-1771878652590.jpg"; 
         
         let savedAdminUser = 'admin'; let savedAdminPass = '12345';
@@ -575,6 +571,31 @@
         function closeCustomPrompt(val) { closeModal('customPrompt'); if(promptCallback) promptCallback(val); }
         function submitCustomPrompt() { closeCustomPrompt(document.getElementById('customPromptInput').value); }
 
+        /* ------------------ লোগো ও নামের রিফ্রেশ সিস্টেম ------------------ */
+        function reloadSite() {
+            let loader = document.getElementById('actionLoader');
+            document.getElementById('actionLoaderText').innerText = "রিফ্রেশ হচ্ছে...";
+            loader.style.visibility = 'visible'; loader.style.opacity = '1'; loader.classList.add('active');
+            setTimeout(() => { window.location.reload(); }, 300);
+        }
+
+        function logoClicked() {
+            if(isAdmin && isEditMode) {
+                document.getElementById('clubLogoUpload').click();
+            } else {
+                reloadSite();
+            }
+        }
+
+        function titleClicked(id) {
+            if(isAdmin && isEditMode) {
+                editUIText(id);
+            } else {
+                reloadSite();
+            }
+        }
+
+        /* ------------------ অ্যাডমিন কন্ট্রোল ------------------ */
         function openAdminLogin() {
             if(isAdmin) { 
                 document.getElementById('loginFormArea').style.display = 'none'; 
@@ -709,7 +730,6 @@
             });
         }
 
-        function clickLogoUpload() { if(isAdmin && isEditMode) { document.getElementById('clubLogoUpload').click(); } else if (isAdmin) { showCustomAlert("লোগো পরিবর্তন করতে 'এডিট মোড' চালু করুন।"); } }
         function clickProfilePhotoUpload() { if(isAdmin && isEditMode) { document.getElementById('editProfilePhoto').click(); } else if (isAdmin) { showCustomAlert("ছবি পরিবর্তন করতে 'এডিট মোড' চালু করুন।"); } }
         
         function updateClubLogo(input) { 
